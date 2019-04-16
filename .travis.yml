@@ -29,4 +29,3 @@ install:
 
 script:
   - ./vendor/bin/grumphp run
-  - composer test
