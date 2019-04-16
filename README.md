@@ -17,6 +17,8 @@ $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = \Pluswerk\Sentry\E
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler'] = \Pluswerk\Sentry\ErrorHandler\ProductionExceptionHandler::class;
 ```
 
+You can disable Sentry error logging by setting env variable `DISABLE_SENTRY` to true.
+
 Require via
 ```
 composer require pluswerk/sentry
