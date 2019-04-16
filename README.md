@@ -9,14 +9,10 @@ Usage:
 
 Add your Sentry URL to your Local Configuration like this:
 
+`LocalConfiguration.php` or `AdditionalConfiguration.php`:
 ```php
-$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sentry'] = [
-        'dsn' => 'https://xyz@sentry.io/12345',
-];
-```
-
-Also you need to adjust the ExceptionHandler of TYPO3 to the following:
-```php
+$GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sentry']['dsn'] = 'https://xyz@sentry.io/12345';
+#Also you need to adjust the ExceptionHandler of TYPO3 to the following:
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = \Pluswerk\Sentry\ErrorHandler\DebugExceptionHandler::class;
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler'] = \Pluswerk\Sentry\ErrorHandler\ProductionExceptionHandler::class;
 ```
