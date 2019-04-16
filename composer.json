@@ -1,0 +1,35 @@
+{
+  "name": "pluswerk/sentry",
+  "type": "typo3-cms-extension",
+  "description": "+Pluswerk TYPO3 extension: Sentry Client",
+  "homepage": "https://www.pluswerk.ag/",
+  "support": {
+    "source": "https://github.com/pluswerk/sentry",
+    "issues": "https://github.com/pluswerk/sentry/issues",
+    "docs": "https://github.com/pluswerk/sentry/blob/master/README.md"
+  },
+  "license": "GPL-2.0-or-later",
+  "extra": {
+    "grumphp": {
+      "config-default-path": "vendor/pluswerk/grumphp-config/grumphp.yml"
+    },
+    "pluswerk/grumphp-config": {
+      "auto-setting": true
+    }
+  },
+  "config": {
+    "sort-packages": true
+  },
+  "autoload": {
+    "psr-4": {
+      "Pluswerk\\Sentry\\": "Classes/"
+    }
+  },
+  "require": {
+    "php": "7.0.* 7.1.* 7.2.* 7.3.*",
+    "sentry/sentry": "^1.9"
+  },
+  "require-dev": {
+    "pluswerk/grumphp-config": "2.*"
+  }
+}
