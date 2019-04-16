@@ -8,3 +8,8 @@ $GLOBALS['TYPO3_CONF_VARS']['EXTCONF']['sentry'] = [
         'dsn' => 'https://xyz@sentry.io/12345',
 ];
 ```
+
+Require via
+```
+composer require pluswerk/sentry
+```
