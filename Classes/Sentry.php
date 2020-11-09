@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Plus\PlusSentry;
+namespace Pluswerk\Sentry;
 
 use Sentry\ClientInterface;
 use Sentry\SentrySdk;

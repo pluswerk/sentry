@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Plus\PlusSentry;
+namespace Pluswerk\Sentry;
 
-use Plus\PlusSentry\Handler\DebuggingExceptionHandler;
-use Plus\PlusSentry\Handler\ProductionExceptionHandler;
+use Pluswerk\Sentry\Handler\DebuggingExceptionHandler;
+use Pluswerk\Sentry\Handler\ProductionExceptionHandler;
 
 final class Bootstrap
 {

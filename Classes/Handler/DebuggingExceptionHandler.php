@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Plus\PlusSentry\Handler;
+namespace Pluswerk\Sentry\Handler;
 
-use Plus\PlusSentry\Sentry;
+use Pluswerk\Sentry\Sentry;
 use TYPO3\CMS\Core\Error\DebugExceptionHandler;
 
 final class DebuggingExceptionHandler extends DebugExceptionHandler

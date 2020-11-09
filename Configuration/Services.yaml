@@ -7,11 +7,11 @@ services:
     autoconfigure: true
     public: true
 
-  Plus\PlusSentry\ScopeConfig:
+  Pluswerk\Sentry\ScopeConfig:
 
-  Plus\PlusSentry\Sentry:
+  Pluswerk\Sentry\Sentry:
     arguments:
-      - '@Plus\PlusSentry\ScopeConfig'
+      - '@Pluswerk\Sentry\ScopeConfig'
       - '@TYPO3\CMS\Core\Configuration\ExtensionConfiguration'
       - '%env(SENTRY_DSN)%'
       - '%env(SENTRY_ENABLED)%'

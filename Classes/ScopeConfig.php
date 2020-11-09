@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Plus\PlusSentry;
+namespace Pluswerk\Sentry;
 
 use Sentry\State\Scope;
 use TYPO3\CMS\Core\Core\Environment;

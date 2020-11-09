@@ -25,7 +25,7 @@
   },
   "autoload": {
     "psr-4": {
-      "Plus\\PlusSentry\\": "Classes/"
+      "Pluswerk\\Sentry\\": "Classes/"
     }
   },
   "require": {
