@@ -1,4 +1,4 @@
-plugin.tx_plussentry {
+plugin.tx_sentry {
   user {
     # username = 'Import User'
     # id = 1

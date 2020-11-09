@@ -75,7 +75,7 @@ final class ScopeConfig
     {
         if ($this->config === null) {
             $config = $this->configurationManager->getConfiguration(ConfigurationManager::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
-            $this->config = $config['plugin.']['tx_plussentry.'] ?? [];
+            $this->config = $config['plugin.']['tx_sentry.'] ?? [];
         }
         return $this->config;
     }

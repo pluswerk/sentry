@@ -8,7 +8,7 @@
   - `SENTRY_DSN=https://dsn-to-your@sentry.io/instance`
   - `SENTRY_ENABLED` (optional) Disable Sentry by setting this to 0
 - Add the following line to your `AdditionalConfiguration.php`
-  - `\Plus\PlusSentry\Bootstrap::initializeHandler();`
+  - `\Pluswerk\Sentry\Bootstrap::initializeHandler();`
 
 That's basically it. This will already catch all Exceptions.
 
@@ -24,7 +24,7 @@ The entire configuration for sentry is exposed via typoscript
 
 ```typo3_typoscript
 
-plugin.tx_plussentry {
+plugin.tx_sentry {
   user {
     # Add a fallback user for when no BE or FE user is set
     username = 'unknown-user'
@@ -43,7 +43,7 @@ plugin.tx_plussentry {
 #### Configuring the scope
 
 Sometimes it might be necessary to additionally configure the scope of a sentry event.  
-For this, the static method `Plus\PlusSentry\Sentry::withScope($exception, $scopeCallback)` comes in play.  
+For this, the static method `\Pluswerk\Sentry\Sentry::withScope($exception, $scopeCallback)` comes in play.  
 The arguments are similar to `https://docs.sentry.io/platforms/php/enriching-events/scopes/#local-scopes`.
 The first argument requires the exception to be thrown and the second is a callback, 
 for where you can apply custom settings to the Sentry Scope.  

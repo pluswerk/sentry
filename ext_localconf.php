@@ -5,7 +5,7 @@
 defined('TYPO3_MODE') || die();
 
 \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
-    'plus_sentry',
+    'sentry',
     'setup',
-    "@import EXT:plus_sentry/Configuration/TypoScript/setup.typoscript'",
+    "@import EXT:sentry/Configuration/TypoScript/setup.typoscript'",
 );
