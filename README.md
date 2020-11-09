@@ -6,7 +6,7 @@
 
 - Add two environment variables:
   - `SENTRY_DSN=https://dsn-to-your@sentry.io/instance`
-  - `SENTRY_ENABLED` (optional) Disable Sentry by setting this to 0
+  - `DISABLE_SENTRY` (optional) Disable Sentry by setting this to 1
 - Add the following line to your `AdditionalConfiguration.php`
   - `\Pluswerk\Sentry\Bootstrap::initializeHandler();`
 

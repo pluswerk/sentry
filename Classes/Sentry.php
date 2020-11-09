@@ -23,11 +23,11 @@ final class Sentry
     private bool $withGitReleases;
     private ScopeConfig $scopeConfig;
 
-    public function __construct(ScopeConfig $config, ExtensionConfiguration $configuration, string $dsn, bool $enabled = true)
+    public function __construct(ScopeConfig $config, ExtensionConfiguration $configuration, string $dsn = '', bool $disabled = false)
     {
         $this->scopeConfig = $config;
         $this->dsn = $dsn;
-        $this->enabled = $enabled;
+        $this->enabled = !$disabled;
         $this->setupExtensionConfiguration($configuration);
         $this->setup();
     }
@@ -40,7 +40,11 @@ final class Sentry
     public function setupExtensionConfiguration(ExtensionConfiguration $configuration): void
     {
         $disabled = $configuration->get('plus_sentry', 'force_disable_sentry');
-        if ($disabled === '1') {
+        $dsn = $configuration->get('plus_sentry', 'sentry_dsn');
+        if ($dsn) {
+            $this->dsn = $dsn;
+        }
+        if ($disabled || !$this->dsn) {
             $this->enabled = false;
         }
         $git = $configuration->get('plus_sentry', 'enable_git_hash_releases') ?? false;

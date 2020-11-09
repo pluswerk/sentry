@@ -1,5 +1,6 @@
 parameters:
-  env(SENTRY_ENABLED): 'true'
+  env(DISABLE_SENTRY): 'false'
+  env(SENTRY_DSN): ''
 
 services:
   _defaults:
@@ -14,4 +15,4 @@ services:
       - '@Pluswerk\Sentry\ScopeConfig'
       - '@TYPO3\CMS\Core\Configuration\ExtensionConfiguration'
       - '%env(SENTRY_DSN)%'
-      - '%env(SENTRY_ENABLED)%'
+      - '%env(DISABLE_SENTRY)%'
