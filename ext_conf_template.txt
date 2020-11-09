@@ -1,8 +1,8 @@
-# cat=plus_sentry; type=boolean; label=Override SENTRY_ENABLED environment-variable
+# cat=sentry; type=boolean; label=Override SENTRY_ENABLED environment-variable
 force_disable_sentry = 0
 
-# cat=plus_sentry; type=boolean; label=Enable Sentry Releases through git-head
+# cat=sentry; type=boolean; label=Enable Sentry Releases through git-head
 enable_git_hash_releases = 1
 
-# cat=plus_sentry; type=string; label=Set custom DSN (replaces SENTRY_DSN env)
+# cat=sentry; type=string; label=Set custom DSN (replaces SENTRY_DSN env)
 sentry_dsn = ''

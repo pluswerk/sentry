@@ -39,15 +39,15 @@ final class Sentry
 
     public function setupExtensionConfiguration(ExtensionConfiguration $configuration): void
     {
-        $disabled = $configuration->get('plus_sentry', 'force_disable_sentry');
-        $dsn = $configuration->get('plus_sentry', 'sentry_dsn');
+        $disabled = $configuration->get('sentry', 'force_disable_sentry');
+        $dsn = $configuration->get('sentry', 'sentry_dsn');
         if ($dsn) {
             $this->dsn = $dsn;
         }
         if ($disabled || !$this->dsn) {
             $this->enabled = false;
         }
-        $git = $configuration->get('plus_sentry', 'enable_git_hash_releases') ?? false;
+        $git = $configuration->get('sentry', 'enable_git_hash_releases') ?? false;
         $this->withGitReleases = $git === '1';
     }
 
