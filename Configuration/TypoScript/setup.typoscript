@@ -1,0 +1,10 @@
+plugin.tx_plussentry {
+  user {
+    # username = 'Import User'
+    # id = 1
+    # email = 'example@email.com'
+  }
+  # options {
+  #
+  # }
+}

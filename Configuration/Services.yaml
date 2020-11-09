@@ -1,0 +1,17 @@
+parameters:
+  env(SENTRY_ENABLED): 'true'
+
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: true
+
+  Plus\PlusSentry\ScopeConfig:
+
+  Plus\PlusSentry\Sentry:
+    arguments:
+      - '@Plus\PlusSentry\ScopeConfig'
+      - '@TYPO3\CMS\Core\Configuration\ExtensionConfiguration'
+      - '%env(SENTRY_DSN)%'
+      - '%env(SENTRY_ENABLED)%'

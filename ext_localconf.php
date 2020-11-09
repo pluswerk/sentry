@@ -1,13 +1,11 @@
 <?php
 
-call_user_func(function () {
+// note: the error handler is not here, because ext_localconf is loaded too late
 
-    if (getenv('DISABLE_SENTRY')) {
-        return;
-    }
+defined('TYPO3_MODE') || die();
 
-    \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance(\Pluswerk\Sentry\SentryUtility::class)->getClient();
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['Objects'][\Pluswerk\Sentry\ErrorHandler\ProductionExceptionHandler::class]['className'] = \Pluswerk\Sentry\ErrorHandler\ProductionExceptionHandler::class;
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = \Pluswerk\Sentry\ErrorHandler\DebugExceptionHandler::class;
-    $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler'] = \Pluswerk\Sentry\ErrorHandler\ProductionExceptionHandler::class;
-});
+\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::addTypoScript(
+    'plus_sentry',
+    'setup',
+    "@import EXT:plus_sentry/Configuration/TypoScript/setup.typoscript'",
+);
