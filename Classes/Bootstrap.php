@@ -12,7 +12,7 @@ final class Bootstrap
     public static function initializeHandler(): void
     {
         $sys = &$GLOBALS['TYPO3_CONF_VARS']['SYS'];
-        $sys['debugExceptionHandler'] = ProductionExceptionHandler::class;
-        $sys['productionExceptionHandler'] = DebuggingExceptionHandler::class;
+        $sys['debugExceptionHandler'] = DebuggingExceptionHandler::class;
+        $sys['productionExceptionHandler'] = ProductionExceptionHandler::class;
     }
 }
