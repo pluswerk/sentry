@@ -57,8 +57,10 @@ final class Sentry
             return;
         }
         $options = $this->scopeConfig->getConfig()['options.'] ?? [];
-        $options['environment'] = (string)Environment::getContext();
+        $options['environment'] = preg_replace('/[\/\s]/', '', Environment::getContext());
         $options['dsn'] = $this->dsn;
+        $options['attach_stacktrace'] = true;
+
         if ($this->withGitReleases) {
             $options['release'] = shell_exec('git rev-parse HEAD');
         }
