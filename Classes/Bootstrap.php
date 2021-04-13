@@ -4,15 +4,14 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry;
 
-use Pluswerk\Sentry\Handler\DebuggingExceptionHandler;
+use Pluswerk\Sentry\Handler\DebugExceptionHandler;
 use Pluswerk\Sentry\Handler\ProductionExceptionHandler;
 
-final class Bootstrap
+class Bootstrap
 {
-    public static function initializeHandler(): void
+    public function initializeHandler(): void
     {
-        $sys = &$GLOBALS['TYPO3_CONF_VARS']['SYS'];
-        $sys['debugExceptionHandler'] = DebuggingExceptionHandler::class;
-        $sys['productionExceptionHandler'] = ProductionExceptionHandler::class;
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['debugExceptionHandler'] = DebugExceptionHandler::class;
+        $GLOBALS['TYPO3_CONF_VARS']['SYS']['productionExceptionHandler'] = ProductionExceptionHandler::class;
     }
 }

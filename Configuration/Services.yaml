@@ -1,18 +1,10 @@
-parameters:
-  env(DISABLE_SENTRY): 'false'
-  env(SENTRY_DSN): ''
-
 services:
   _defaults:
     autowire: true
     autoconfigure: true
+    public: false
+
+  Pluswerk\Sentry\Service\:
+    resource: '../Classes/Service/*'
     public: true
 
-  Pluswerk\Sentry\ScopeConfig:
-
-  Pluswerk\Sentry\Sentry:
-    arguments:
-      - '@Pluswerk\Sentry\ScopeConfig'
-      - '@TYPO3\CMS\Core\Configuration\ExtensionConfiguration'
-      - '%env(SENTRY_DSN)%'
-      - '%env(DISABLE_SENTRY)%'

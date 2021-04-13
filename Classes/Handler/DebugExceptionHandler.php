@@ -6,7 +6,7 @@ namespace Pluswerk\Sentry\Handler;
 
 use Pluswerk\Sentry\Traits\ExceptionHandlerTrait;
 
-class ProductionExceptionHandler extends \TYPO3\CMS\Core\Error\ProductionExceptionHandler
+class DebugExceptionHandler extends \TYPO3\CMS\Core\Error\DebugExceptionHandler
 {
     use ExceptionHandlerTrait;
 }

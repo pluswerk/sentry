@@ -31,7 +31,7 @@
   "require": {
     "php": ">=7.4",
     "sentry/sentry": "^2.0 || ^3.0",
-    "typo3/cms-core": "^10.0",
+    "typo3/cms-core": "^10.4",
     "http-interop/http-factory-guzzle": "^1.0"
   },
   "require-dev": {
