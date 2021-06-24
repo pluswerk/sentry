@@ -6,10 +6,8 @@ matrix:
   fast_finish: true
   include:
     - php: 7.4
-      env: TYPO3_VERSION=10.*
   allow_failures:
     - php: nightly
-      env: TYPO3_VERSION=10.*
 
 cache:
   directories:
@@ -20,7 +18,6 @@ before_install:
   - phpenv config-rm xdebug.ini || echo "xdebug not available"
 
 install:
-  - composer require typo3/cms="$TYPO3_VERSION" --dev
   - composer install --no-progress --no-suggest -n
 
 script:

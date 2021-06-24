@@ -16,8 +16,8 @@
     "pluswerk/grumphp-config": {
       "auto-setting": true
     },
-    "branch-alias":{
-      "dev-v2": "2.0.x-dev"
+    "typo3/cms": {
+      "extension-key": "sentry"
     }
   },
   "config": {
