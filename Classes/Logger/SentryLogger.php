@@ -13,6 +13,7 @@ use TYPO3\CMS\Core\Log\Writer\AbstractWriter;
 use TYPO3\CMS\Core\Log\Writer\WriterInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+
 use function Sentry\withScope;
 
 class SentryLogger extends AbstractWriter implements SingletonInterface
