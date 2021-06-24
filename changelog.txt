@@ -1,0 +1,1 @@
+2021-04-13 Removed TypoScript configuration support so we can use the Service in early TYPO3 state

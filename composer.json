@@ -15,6 +15,9 @@
     },
     "pluswerk/grumphp-config": {
       "auto-setting": true
+    },
+    "typo3/cms": {
+      "extension-key": "sentry"
     }
   },
   "config": {
@@ -26,10 +29,12 @@
     }
   },
   "require": {
-    "php": ">=7",
-    "sentry/sentry": "^1.9"
+    "php": ">=7.4",
+    "sentry/sentry": "^2.0 || ^3.0",
+    "typo3/cms-core": "^10.4",
+    "http-interop/http-factory-guzzle": "^1.0"
   },
   "require-dev": {
-    "pluswerk/grumphp-config": "2.*"
+    "pluswerk/grumphp-config": "^4.0"
   }
 }
