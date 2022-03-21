@@ -40,12 +40,10 @@ class QueueTransport implements TransportInterface
         $serializedPayload = $this->payloadSerializer->serialize($event);
 
         $entry = new Entry((string)$dsn, (string)$event->getType(), $serializedPayload);
-
-
         $this->queue->push($entry);
 
-       $sendResponse = new Response(ResponseStatus::createFromHttpStatusCode(200));
-       return new FulfilledPromise($sendResponse);
+        $sendResponse = new Response(ResponseStatus::createFromHttpStatusCode(200));
+        return new FulfilledPromise($sendResponse);
     }
 
     public function close(?int $timeout = null): PromiseInterface
