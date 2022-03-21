@@ -6,3 +6,6 @@ enable_git_hash_releases = 1
 
 # cat=sentry; type=string; label=Set custom DSN (replaces SENTRY_DSN env)
 sentry_dsn =
+
+# cat=sentry; type=boolean; label=Queue active
+queue =

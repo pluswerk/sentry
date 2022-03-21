@@ -8,3 +8,22 @@ services:
     resource: '../Classes/Service/*'
     public: true
 
+  Pluswerk\Sentry\Queue\:
+    resource: '../Classes/Queue/*'
+
+  Sentry\Serializer\PayloadSerializer:
+    public: true
+
+  Sentry\Serializer\PayloadSerializerInterface:
+    alias: Sentry\Serializer\PayloadSerializer
+    public: true
+
+  Pluswerk\Sentry\Queue\QueueInterface:
+    alias: Pluswerk\Sentry\Queue\FileQueue
+    public: true
+
+  Pluswerk\Sentry\Command\FlushCommand:
+    tags:
+      - name: 'console.command'
+        command: 'pluswerk:sentry:flush'
+        description: 'Transports potentially queued events'

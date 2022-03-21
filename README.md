@@ -4,9 +4,10 @@
 
 ### Quickstart:
 
-- Add two environment variables:
+- Add environment variables:
   - `SENTRY_DSN=https://dsn-to-your@sentry.io/instance`
   - `DISABLE_SENTRY` (optional) Disable Sentry by setting this to 1
+  - `SENTRY_QUEUE` (optional) Enable queue system by setting this to 1
 - Add the following line to your `AdditionalConfiguration.php`
   - `(new \Pluswerk\Sentry\Bootstrap())->initializeHandler();`
 
