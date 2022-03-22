@@ -34,13 +34,13 @@ class FileQueue implements QueueInterface
         }
         if ($file) {
             $absFile = $this->directory . $file;
-            $content = @file_get_contents($absFile);
+            $content = file_get_contents($absFile);
             unlink($absFile);
             if (!$content) {
                 return null;
             }
             /** @noinspection JsonEncodingApiUsageInspection */
-            $data = @json_decode($content, true);
+            $data = json_decode($content, true);
             if (!$data) {
                 return null;
             }

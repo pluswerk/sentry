@@ -10,6 +10,9 @@
   - `SENTRY_QUEUE` (optional) Enable queue system by setting this to 1
 - Add the following line to your `AdditionalConfiguration.php`
   - `(new \Pluswerk\Sentry\Bootstrap())->initializeHandler();`
+- If you enabled SENTRY_QUEUE
+  - Add `typo3 pluswerk:sentry:flush` to your scheduling service
+  - Add environment before the command if you want to report errors while running the command `SENTRY_QUEUE=0 typo3 pluswerk:sentry:flush`
 
 ### Settings
 
