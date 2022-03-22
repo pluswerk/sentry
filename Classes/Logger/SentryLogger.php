@@ -18,17 +18,14 @@ use function Sentry\withScope;
 
 class SentryLogger extends AbstractWriter implements SingletonInterface
 {
-
     public function writeLog(LogRecord $record): WriterInterface
     {
-        $sentry = Sentry::getInstance();
-        if (null === $sentry) {
+        $client = Sentry::getInstance()->getClient();
+        if (null === $client) {
             return $this;
         }
-        $client = $sentry->getClient();
 
         if (
-            null !== $client &&
             $record->getComponent() !== 'TYPO3.CMS.Frontend.ContentObject.Exception.ProductionExceptionHandler' &&
             ExtensionManagementUtility::isLoaded('sentry')
         ) {
