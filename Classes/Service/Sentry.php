@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Service;
 
+use Pluswerk\Sentry\Transport\TransportFactory;
+use Sentry\ClientBuilder;
 use Sentry\ClientInterface;
 use Sentry\SentrySdk;
 use Sentry\State\Scope;
@@ -23,6 +25,7 @@ class Sentry implements SingletonInterface
 {
     protected string $dsn;
     protected bool $enabled;
+    protected bool $queue;
     protected bool $withGitReleases;
     protected ScopeConfig $scopeConfig;
 
@@ -33,9 +36,12 @@ class Sentry implements SingletonInterface
     public function __construct(ScopeConfig $config, ExtensionConfiguration $configuration)
     {
         $this->scopeConfig = $config;
-        $env = getenv();
-        $this->dsn = $env['SENTRY_DSN'] ?? $configuration->get('sentry', 'sentry_dsn') ?: '';
-        $this->enabled = !($env['DISABLE_SENTRY'] ?? $configuration->get('sentry', 'force_disable_sentry') ?: false) && $this->dsn;
+
+        $this->dsn = getenv('SENTRY_DSN') ?: $_ENV['SENTRY_DSN'] ?: $configuration->get('sentry', 'sentry_dsn') ?: '';
+        $this->queue = (bool)filter_var(getenv('SENTRY_QUEUE') ?: $_ENV['SENTRY_QUEUE'] ?: $configuration->get('sentry', 'sentry_queue') ?: 0, FILTER_VALIDATE_INT);
+        $disabled = filter_var($env['DISABLE_SENTRY'] ?? $configuration->get('sentry', 'force_disable_sentry'), FILTER_VALIDATE_INT);
+
+        $this->enabled = $disabled === 0 && $this->dsn;
 
         $git = $configuration->get('sentry', 'enable_git_hash_releases') ?? false;
         $this->withGitReleases = $git === '1';
@@ -59,7 +65,17 @@ class Sentry implements SingletonInterface
             $options['release'] = shell_exec('git rev-parse HEAD');
         }
 
-        init(array_filter($options));
+        if ($this->queue) {
+            $transportFactory = new TransportFactory();
+            $builder = ClientBuilder::create(array_filter($options));
+            $builder->setTransportFactory($transportFactory);
+            SentrySdk::getCurrentHub()->bindClient($builder->getClient());
+        }
+
+        if (!$this->queue) {
+            init(array_filter($options));
+        }
+
         configureScope(
             function (Scope $scope): void {
                 $this->populateScope($scope);
