@@ -21,6 +21,10 @@ class FileQueue implements QueueInterface
         }
     }
 
+    /**
+     * @return \Pluswerk\Sentry\Queue\Entry|null
+     * @throws \JsonException
+     */
     public function pop(): ?Entry
     {
         $file = null;
@@ -39,8 +43,7 @@ class FileQueue implements QueueInterface
             if (!$content) {
                 return null;
             }
-            /** @noinspection JsonEncodingApiUsageInspection */
-            $data = json_decode($content, true);
+            $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
             if (!$data) {
                 return null;
             }
