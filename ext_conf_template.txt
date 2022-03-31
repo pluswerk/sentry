@@ -8,4 +8,4 @@ enable_git_hash_releases = 1
 sentry_dsn =
 
 # cat=sentry; type=boolean; label=Queue active
-queue =
+sentry_queue =
