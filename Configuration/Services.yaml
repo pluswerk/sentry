@@ -22,6 +22,12 @@ services:
     alias: Pluswerk\Sentry\Queue\FileQueue
     public: true
 
+  Pluswerk\Sentry\Queue\FileQueue:
+    arguments:
+      # 0 for no limit, positive integer to limit the files created in the queue
+      $limit: 10000
+      $compress: true
+
   Pluswerk\Sentry\Command\FlushCommand:
     tags:
       - name: 'console.command'
