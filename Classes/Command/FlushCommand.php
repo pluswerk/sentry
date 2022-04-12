@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Command;
 
+use Http\Client\Common\Exception\ClientErrorException;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Jean85\PrettyVersions;
 use Pluswerk\Sentry\Queue\Entry;
 use Pluswerk\Sentry\Queue\QueueInterface;
+use Pluswerk\Sentry\Service\Sentry;
 use Sentry\Client;
 use Sentry\Dsn;
 use Sentry\HttpClient\HttpClientFactory;
@@ -75,10 +77,16 @@ class FlushCommand extends Command
     {
         $streamFactory = Psr17FactoryDiscovery::findStreamFactory();
         $requestFactory = Psr17FactoryDiscovery::findRequestFactory();
+        $sentryClient = Sentry::getInstance()->getClient();
 
         $i = (int)$input->getOption('limit-items');
 
-        while (($entry = $this->queue->pop()) && $i > 0) {
+        do {
+            $entry = $this->queue->pop();
+            if (null === $entry) {
+                break;
+            }
+
             $dsn = Dsn::createFromString($entry->getDsn());
             if ($entry->isTransaction()) {
                 $request = $requestFactory->createRequest('POST', $dsn->getEnvelopeApiEndpointUrl())
@@ -91,9 +99,13 @@ class FlushCommand extends Command
             }
 
             $client = $this->getClient($entry);
-            $client->sendAsyncRequest($request)->wait();
+            try {
+                $client->sendAsyncRequest($request)->wait();
+            } catch (ClientErrorException $clientErrorException) {
+                $sentryClient && $sentryClient->captureException($clientErrorException);
+            }
             $i--;
-        }
+        } while ($i > 0);
 
         return Command::SUCCESS;
     }
