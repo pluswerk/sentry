@@ -31,7 +31,7 @@ final class SentryUtility implements SingletonInterface
     public function errorHandler($type, $message, $file = '', $line = 0, array $context = [])
     {
         $shouldHandleErrors = $type & $GLOBALS['TYPO3_CONF_VARS']['SYS']['exceptionalErrors'];
-        if ($this->oldErrorHandler && $shouldHandleErrors !== 0) {
+        if ($this->oldErrorHandler && !$shouldHandleErrors) {
             $handler = $this->oldErrorHandler;
             return $handler(...\func_get_args());
         }
@@ -41,7 +41,7 @@ final class SentryUtility implements SingletonInterface
     public function getClient(): SentryClient
     {
         if (!$this->client) {
-            $this->oldErrorHandler = set_error_handler([$this, 'errorHandler'], E_ALL);
+            $this->oldErrorHandler = set_error_handler([$this, 'errorHandler'], $GLOBALS['TYPO3_CONF_VARS']['SYS']['errorHandlerErrors']);
             $this->client = new SentryClient($this->getOptions());
             $this->registerErrorHandler($this->client);
         }
