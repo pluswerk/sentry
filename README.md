@@ -8,6 +8,7 @@
   - `SENTRY_DSN=https://dsn-to-your@sentry.io/instance`
   - `DISABLE_SENTRY` (optional) Disable Sentry by setting this to 1
   - `SENTRY_QUEUE` (optional) Enable queue system by setting this to 1
+  - `SENTRY_ERRORS_TO_REPORT` (optional) The Errors to Report as number, e.g. 4096 for E_REVOERABLE_ERROR
 - Add the following line to your `AdditionalConfiguration.php`
   - `(new \Pluswerk\Sentry\Bootstrap())->initializeHandler();`
 - If you enabled SENTRY_QUEUE

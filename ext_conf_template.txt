@@ -9,3 +9,6 @@ sentry_dsn =
 
 # cat=sentry; type=boolean; label=Queue active
 sentry_queue =
+
+# cat=sentry; type=integer; label=The Errors to Report as number, e.g. 4096 for E_REVOERABLE_ERROR
+sentry_errors_to_report =

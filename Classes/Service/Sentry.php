@@ -10,6 +10,7 @@ use Sentry\ClientInterface;
 use Sentry\SentrySdk;
 use Sentry\State\Scope;
 use Throwable;
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException;
 use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\SingletonInterface;
@@ -28,6 +29,7 @@ class Sentry implements SingletonInterface
     protected bool $queue;
     protected bool $withGitReleases;
     protected ScopeConfig $scopeConfig;
+    protected int $errorsToReport;
 
     /**
      * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
@@ -40,6 +42,11 @@ class Sentry implements SingletonInterface
         $this->dsn = getenv('SENTRY_DSN') ?: $_ENV['SENTRY_DSN'] ?: $configuration->get('sentry', 'sentry_dsn') ?: '';
         $this->queue = (bool)filter_var(getenv('SENTRY_QUEUE') ?: $_ENV['SENTRY_QUEUE'] ?: $configuration->get('sentry', 'sentry_queue') ?: 0, FILTER_VALIDATE_INT);
         $disabled = filter_var($env['DISABLE_SENTRY'] ?? $configuration->get('sentry', 'force_disable_sentry'), FILTER_VALIDATE_INT);
+        try {
+            $this->errorsToReport = filter_var($env['SENTRY_ERRORS_TO_REPORT'] ?? $configuration->get('sentry', 'sentry_errors_to_report') ?: ($GLOBALS['TYPO3_CONF_VARS']['SYS']['exceptionalErrors'] ?? E_ALL), FILTER_VALIDATE_INT);
+        } catch (ExtensionConfigurationPathDoesNotExistException $e) {
+            $this->errorsToReport = $GLOBALS['TYPO3_CONF_VARS']['SYS']['exceptionalErrors'] ?? E_ALL;
+        }
 
         $this->enabled = $disabled === 0 && $this->dsn;
 
@@ -59,6 +66,7 @@ class Sentry implements SingletonInterface
             'environment' => preg_replace('/[\/\s]/', '', Environment::getContext()),
             'dsn' => $this->dsn,
             'attach_stacktrace' => true,
+            'error_types' => $this->errorsToReport,
         ];
 
         if ($this->withGitReleases) {
@@ -93,8 +101,7 @@ class Sentry implements SingletonInterface
      */
     public static function getInstance(): self
     {
-        $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        return $objectManager->get(static::class);
+        return GeneralUtility::makeInstance(ObjectManager::class)->get(static::class);
     }
 
     public function getClient(): ?ClientInterface
