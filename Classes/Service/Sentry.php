@@ -94,7 +94,7 @@ class Sentry implements SingletonInterface
     public static function getInstance(): self
     {
         $objectManager = GeneralUtility::makeInstance(ObjectManager::class);
-        return $objectManager->get(static::class);
+        return $objectManager->get(Sentry::class);
     }
 
     public function getClient(): ?ClientInterface

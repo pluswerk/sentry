@@ -11,6 +11,9 @@ services:
   Pluswerk\Sentry\Queue\:
     resource: '../Classes/Queue/*'
 
+  Sentry\Options:
+    public: true
+
   Sentry\Serializer\PayloadSerializer:
     public: true
 

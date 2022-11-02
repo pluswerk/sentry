@@ -23,7 +23,8 @@ class QueueTransport implements TransportInterface
     private PayloadSerializerInterface $payloadSerializer;
     private QueueInterface $queue;
 
-    public function __construct(Options $options, PayloadSerializerInterface $payloadSerializer, QueueInterface $queue) {
+    public function __construct(Options $options, PayloadSerializerInterface $payloadSerializer, QueueInterface $queue)
+    {
         $this->options = $options;
         $this->payloadSerializer = $payloadSerializer;
         $this->queue = $queue;
