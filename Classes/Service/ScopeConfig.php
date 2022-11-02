@@ -5,7 +5,11 @@ declare(strict_types=1);
 namespace Pluswerk\Sentry\Service;
 
 use Sentry\State\Scope;
+use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\UserAspect;
 use TYPO3\CMS\Core\Core\Environment;
+use TYPO3\CMS\Core\Information\Typo3Version;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 class ScopeConfig
 {
@@ -20,7 +24,7 @@ class ScopeConfig
     protected function getTags(): array
     {
         return [
-            'typo3_version' => TYPO3_version,
+            'typo3_version' => (new Typo3Version())->getVersion(),
             'typo3_mode' => TYPO3_MODE,
             'php_version' => PHP_VERSION,
             'application_context' => (string)Environment::getContext()
@@ -37,8 +41,12 @@ class ScopeConfig
         $user = [];
         switch (TYPO3_MODE) {
             case 'FE':
-                if ($GLOBALS['TSFE']->loginUser === true) {
-                    $user['username'] = $GLOBALS['TSFE']->fe_user->user['username'];
+                $frontendUserAspect = GeneralUtility::makeInstance(Context::class)->getAspect('frontend.user');
+                if (!$frontendUserAspect instanceof UserAspect) {
+                    return [];
+                }
+                if ($frontendUserAspect->isLoggedIn()) {
+                    $user['username'] = $frontendUserAspect->get('username');
                     if (isset($GLOBALS['TSFE']->fe_user->user['email'])) {
                         $user['email'] = $GLOBALS['TSFE']->fe_user->user['email'];
                     }

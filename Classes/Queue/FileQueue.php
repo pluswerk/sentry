@@ -22,7 +22,8 @@ class FileQueue implements QueueInterface
         if (!file_exists($this->directory)) {
             try {
                 GeneralUtility::mkdir_deep($this->directory);
-            } catch (Exception $exception) {}
+            } catch (Exception $exception) {
+            }
         }
     }
 
@@ -45,6 +46,9 @@ class FileQueue implements QueueInterface
             $absFile = $this->directory . $file;
             // $content = file_get_contents($absFile);
             $fp = fopen($absFile, 'rb');
+            if (!$fp) {
+                return null;
+            }
             $mime = mime_content_type($absFile);
             switch ($mime) {
                 case 'application/json':
