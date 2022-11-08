@@ -37,8 +37,8 @@ class Sentry implements SingletonInterface
     {
         $this->scopeConfig = $config;
 
-        $this->dsn = getenv('SENTRY_DSN') ?: $_ENV['SENTRY_DSN'] ?: $configuration->get('sentry', 'sentry_dsn') ?: '';
-        $this->queue = (bool)filter_var(getenv('SENTRY_QUEUE') ?: $_ENV['SENTRY_QUEUE'] ?: $configuration->get('sentry', 'sentry_queue') ?: 0, FILTER_VALIDATE_INT);
+        $this->dsn = getenv('SENTRY_DSN') ?: ($_ENV['SENTRY_DSN'] ?? null) ?: $configuration->get('sentry', 'sentry_dsn') ?: '';
+        $this->queue = (bool)filter_var(getenv('SENTRY_QUEUE') ?: ($_ENV['SENTRY_QUEUE'] ?? null) ?: $configuration->get('sentry', 'sentry_queue') ?: 0, FILTER_VALIDATE_INT);
         $disabled = filter_var($env['DISABLE_SENTRY'] ?? $configuration->get('sentry', 'force_disable_sentry'), FILTER_VALIDATE_INT);
 
         $this->enabled = $disabled === 0 && $this->dsn;
