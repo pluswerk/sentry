@@ -39,22 +39,27 @@ class Sentry implements SingletonInterface
     {
         $this->scopeConfig = $config;
 
-        $this->dsn = getenv('SENTRY_DSN') ?: ($_ENV['SENTRY_DSN'] ?? null) ?: $configuration->get('sentry', 'sentry_dsn') ?: '';
-        $this->queue = (bool)filter_var(getenv('SENTRY_QUEUE') ?: ($_ENV['SENTRY_QUEUE'] ?? null) ?: $configuration->get('sentry', 'sentry_queue') ?: 0, FILTER_VALIDATE_INT);
-        $disabled = filter_var($env['DISABLE_SENTRY'] ?? $configuration->get('sentry', 'force_disable_sentry'), FILTER_VALIDATE_INT);
+        $this->dsn = self::getEnv('SENTRY_DSN') ?: $configuration->get('sentry', 'sentry_dsn') ?: '';
+        $this->queue = (bool)filter_var(self::getEnv('SENTRY_QUEUE') ?: $configuration->get('sentry', 'sentry_queue') ?: 0, FILTER_VALIDATE_INT);
+        $disabled = filter_var(self::getEnv('DISABLE_SENTRY') ?: $configuration->get('sentry', 'force_disable_sentry'), FILTER_VALIDATE_INT);
         $default = E_ALL ^ E_DEPRECATED ^ E_NOTICE ^ E_WARNING ^ E_USER_DEPRECATED;
+        $default = $GLOBALS['TYPO3_CONF_VARS']['SYS']['exceptionalErrors'] ?? $default;
         try {
-            $this->errorsToReport = filter_var($env['SENTRY_ERRORS_TO_REPORT'] ?? $configuration->get('sentry', 'sentry_errors_to_report') ?: ($GLOBALS['TYPO3_CONF_VARS']['SYS']['exceptionalErrors'] ?? $default), FILTER_VALIDATE_INT);
+            $this->errorsToReport = filter_var(self::getEnv('SENTRY_ERRORS_TO_REPORT') ?: $configuration->get('sentry', 'sentry_errors_to_report') ?: $default, FILTER_VALIDATE_INT) ?: $default;
         } catch (ExtensionConfigurationPathDoesNotExistException $e) {
-            $this->errorsToReport = $GLOBALS['TYPO3_CONF_VARS']['SYS']['exceptionalErrors'] ?? $default;
+            $this->errorsToReport = $default;
         }
-
         $this->enabled = $disabled === 0 && $this->dsn;
 
         $git = $configuration->get('sentry', 'enable_git_hash_releases') ?? false;
         $this->withGitReleases = $git === '1';
 
         $this->setup();
+    }
+
+    public static function getEnv(string $env): ?string
+    {
+        return getenv($env) ?: ($_ENV[$env] ?? null);
     }
 
     protected function setup(): void
@@ -102,7 +107,7 @@ class Sentry implements SingletonInterface
      */
     public static function getInstance(): self
     {
-        return GeneralUtility::makeInstance(ObjectManager::class)->get(static::class);
+        return GeneralUtility::makeInstance(ObjectManager::class)->get(Sentry::class);
     }
 
     public function getClient(): ?ClientInterface
