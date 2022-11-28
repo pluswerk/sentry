@@ -56,7 +56,7 @@ class Sentry implements SingletonInterface
         }
 
         $options = [
-            'environment' => preg_replace('/[\/\s]/', '', Environment::getContext()),
+            'environment' => preg_replace('/[\/\s]/', '', (string)Environment::getContext()),
             'dsn' => $this->dsn,
             'attach_stacktrace' => true,
         ];
