@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Command;
 
+use Http\Client\HttpAsyncClient;
+use Jean85\Exception\VersionMissingExceptionInterface;
 use Http\Client\Common\Exception\ClientErrorException;
 use Http\Discovery\Psr17FactoryDiscovery;
 use Jean85\PrettyVersions;
@@ -23,11 +25,14 @@ use Symfony\Component\Console\Output\OutputInterface;
 class FlushCommand extends Command
 {
     private QueueInterface $queue;
+
     private HttpClientFactoryInterface $httpClientFactory;
+
+    /** @var array<string, HttpAsyncClient> */
     private array $httpClientCache = [];
 
     /**
-     * @throws \Jean85\Exception\VersionMissingExceptionInterface
+     * @throws VersionMissingExceptionInterface
      */
     public function __construct(QueueInterface $queue)
     {
@@ -43,7 +48,7 @@ class FlushCommand extends Command
     }
 
     /**
-     * @throws \Jean85\Exception\VersionMissingExceptionInterface
+     * @throws VersionMissingExceptionInterface
      */
     private function createHttpClientFactory(): HttpClientFactory
     {
@@ -58,7 +63,7 @@ class FlushCommand extends Command
         );
     }
 
-    protected function getClient(Entry $entry)
+    protected function getClient(Entry $entry): HttpAsyncClient
     {
         $dsn = $entry->getDsn();
         if (isset($this->httpClientCache[$dsn])) {
@@ -83,7 +88,7 @@ class FlushCommand extends Command
 
         do {
             $entry = $this->queue->pop();
-            if (null === $entry) {
+            if (!$entry instanceof Entry) {
                 break;
             }
 
@@ -104,6 +109,7 @@ class FlushCommand extends Command
             } catch (ClientErrorException $clientErrorException) {
                 $sentryClient && $sentryClient->captureException($clientErrorException);
             }
+
             $i--;
         } while ($i > 0);
 

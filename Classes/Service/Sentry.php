@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Service;
 
+use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use Pluswerk\Sentry\Transport\TransportFactory;
 use Sentry\ClientBuilder;
 use Sentry\ClientInterface;
@@ -25,30 +26,36 @@ use function Sentry\withScope;
 class Sentry implements SingletonInterface
 {
     protected string $dsn;
+
     protected bool $enabled;
+
     protected bool $queue;
+
     protected bool $withGitReleases;
+
     protected ScopeConfig $scopeConfig;
+
     protected int $errorsToReport;
 
     /**
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationPathDoesNotExistException
-     * @throws \TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException
+     * @throws ExtensionConfigurationPathDoesNotExistException
+     * @throws ExtensionConfigurationExtensionNotConfiguredException
      */
     public function __construct(ScopeConfig $config, ExtensionConfiguration $configuration)
     {
         $this->scopeConfig = $config;
 
-        $this->dsn = self::getEnv('SENTRY_DSN') ?: $configuration->get('sentry', 'sentry_dsn') ?: '';
-        $this->queue = (bool)filter_var(self::getEnv('SENTRY_QUEUE') ?: $configuration->get('sentry', 'sentry_queue') ?: 0, FILTER_VALIDATE_INT);
+        $this->dsn = (self::getEnv('SENTRY_DSN') ?: $configuration->get('sentry', 'sentry_dsn')) ?: '';
+        $this->queue = (bool)filter_var((self::getEnv('SENTRY_QUEUE') ?: $configuration->get('sentry', 'sentry_queue')) ?: 0, FILTER_VALIDATE_INT);
         $disabled = filter_var(self::getEnv('DISABLE_SENTRY') ?: $configuration->get('sentry', 'force_disable_sentry'), FILTER_VALIDATE_INT);
         $default = E_ALL ^ E_DEPRECATED ^ E_NOTICE ^ E_WARNING ^ E_USER_DEPRECATED;
         $default = $GLOBALS['TYPO3_CONF_VARS']['SYS']['exceptionalErrors'] ?? $default;
         try {
-            $this->errorsToReport = filter_var(self::getEnv('SENTRY_ERRORS_TO_REPORT') ?: $configuration->get('sentry', 'sentry_errors_to_report') ?: $default, FILTER_VALIDATE_INT) ?: $default;
-        } catch (ExtensionConfigurationPathDoesNotExistException $e) {
+            $this->errorsToReport = filter_var((self::getEnv('SENTRY_ERRORS_TO_REPORT') ?: $configuration->get('sentry', 'sentry_errors_to_report')) ?: $default, FILTER_VALIDATE_INT) ?: $default;
+        } catch (ExtensionConfigurationPathDoesNotExistException) {
             $this->errorsToReport = $default;
         }
+
         $this->enabled = $disabled === 0 && $this->dsn;
 
         $git = $configuration->get('sentry', 'enable_git_hash_releases') ?? false;
@@ -64,12 +71,12 @@ class Sentry implements SingletonInterface
 
     protected function setup(): void
     {
-        if ($this->enabled === false) {
+        if (!$this->enabled) {
             return;
         }
 
         $options = [
-            'environment' => preg_replace('/[\/\s]/', '', (string)Environment::getContext()),
+            'environment' => preg_replace('#[\/\s]#', '', (string)Environment::getContext()),
             'dsn' => $this->dsn,
             'attach_stacktrace' => true,
             'error_types' => $this->errorsToReport,
@@ -103,11 +110,11 @@ class Sentry implements SingletonInterface
     }
 
     /**
-     * @throws \TYPO3\CMS\Extbase\Object\Exception
+     * @throws \InvalidArgumentException
      */
     public static function getInstance(): self
     {
-        return GeneralUtility::makeInstance(ObjectManager::class)->get(Sentry::class);
+        return GeneralUtility::makeInstance(Sentry::class);
     }
 
     public function getClient(): ?ClientInterface
@@ -119,7 +126,7 @@ class Sentry implements SingletonInterface
     {
         $withScope ??= fn(Scope $scope) => $this->populateScope($scope);
         withScope(
-            function (Scope $scope) use ($withScope, $exception): void {
+            static function (Scope $scope) use ($withScope, $exception): void {
                 $withScope($scope);
                 captureException($exception);
             }

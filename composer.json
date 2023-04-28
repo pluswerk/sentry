@@ -10,12 +10,6 @@
   },
   "license": "GPL-2.0-or-later",
   "extra": {
-    "grumphp": {
-      "config-default-path": "grumphp.yml"
-    },
-    "pluswerk/grumphp-config": {
-      "auto-setting": false
-    },
     "typo3/cms": {
       "extension-key": "sentry"
     }
@@ -27,7 +21,8 @@
       "typo3/class-alias-loader": true,
       "phpro/grumphp": true,
       "pluswerk/grumphp-config": true,
-      "phpstan/extension-installer": true
+      "phpstan/extension-installer": true,
+      "php-http/discovery": true
     }
   },
   "autoload": {
@@ -36,17 +31,18 @@
     }
   },
   "require": {
-    "php": "~7.4 || ~8.0 || ~8.1",
+    "php": "~8.0.0 || ~8.1.0 || ~8.2.0",
     "ext-fileinfo": "*",
     "composer-runtime-api": "^2",
     "http-interop/http-factory-guzzle": "^1.0",
     "sentry/sentry": "^3.0",
-    "typo3/cms-core": "^10.4 || ^11.5"
+    "typo3/cms-core": "^11.5 || ^12.4"
   },
   "require-dev": {
     "phpstan/extension-installer": "^1.2",
-    "pluswerk/grumphp-config": "^5.0",
+    "pluswerk/grumphp-config": "^6",
     "saschaegerer/phpstan-typo3": "^1.8",
-    "symfony/http-client": "^5.4"
+    "symfony/http-client": "^5.4",
+    "ssch/typo3-rector": "^1.1.3"
   }
 }

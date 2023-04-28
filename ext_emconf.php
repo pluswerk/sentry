@@ -1,5 +1,7 @@
 <?php
 
+use Composer\InstalledVersions;
+
 /** @var string $_EXTKEY */
 $EM_CONF[$_EXTKEY] = [
     'title' => 'Pluswerk: Sentry Client',
@@ -12,10 +14,10 @@ $EM_CONF[$_EXTKEY] = [
     'uploadfolder' => '0',
     'createDirs' => '',
     'clearCacheOnLoad' => 0,
-    'version' => \Composer\InstalledVersions::getPrettyVersion('pluswerk/sentry'),
+    'version' => InstalledVersions::getPrettyVersion('pluswerk/sentry'),
     'constraints' => [
         'depends' => [
-            'typo3' => '10.0.0-11.9.99',
+            'typo3' => '11.5.0-12.9.99',
         ],
         'conflicts' => [],
         'suggests' => [],

@@ -13,9 +13,10 @@ trait ExceptionHandlerTrait
     {
         try {
             Sentry::getInstance()->withScope($exception);
-        } catch (\Throwable $sentryError) {
+        } catch (\Throwable) {
             //ignore $sentryError
         }
+
         /** @noinspection PhpMultipleClassDeclarationsInspection */
         parent::handleException($exception);
     }
