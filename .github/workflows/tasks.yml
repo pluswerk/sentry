@@ -1,6 +1,8 @@
 name: Tasks
 
-on: [push, pull_request]
+on:
+  push:
+  workflow_dispatch:
 
 jobs:
   lint-php:
