@@ -20,17 +20,8 @@ use Sentry\Transport\TransportInterface;
 
 class QueueTransport implements TransportInterface
 {
-    private Options $options;
-
-    private PayloadSerializerInterface $payloadSerializer;
-
-    private QueueInterface $queue;
-
-    public function __construct(Options $options, PayloadSerializerInterface $payloadSerializer, QueueInterface $queue)
+    public function __construct(private Options $options, private PayloadSerializerInterface $payloadSerializer, private QueueInterface $queue)
     {
-        $this->options = $options;
-        $this->payloadSerializer = $payloadSerializer;
-        $this->queue = $queue;
     }
 
     public function send(Event $event): PromiseInterface

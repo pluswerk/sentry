@@ -24,8 +24,6 @@ use Symfony\Component\Console\Output\OutputInterface;
 
 class FlushCommand extends Command
 {
-    private QueueInterface $queue;
-
     private HttpClientFactoryInterface $httpClientFactory;
 
     /** @var array<string, HttpAsyncClient> */
@@ -34,10 +32,9 @@ class FlushCommand extends Command
     /**
      * @throws VersionMissingExceptionInterface
      */
-    public function __construct(QueueInterface $queue)
+    public function __construct(private QueueInterface $queue)
     {
         parent::__construct('pluswerk:sentry:flush');
-        $this->queue = $queue;
         $this->httpClientFactory = $this->createHttpClientFactory();
     }
 
@@ -85,12 +82,17 @@ class FlushCommand extends Command
         $sentryClient = Sentry::getInstance()->getClient();
 
         $i = (int)$input->getOption('limit-items');
+        $output->writeln(sprintf('running with limit-items=%d', $i), $output::VERBOSITY_VERBOSE);
 
         do {
             $entry = $this->queue->pop();
             if (!$entry instanceof Entry) {
                 break;
             }
+
+            $i--;
+            $itemIndex = $input->getOption('limit-items') - $i;
+            $output->writeln(sprintf('start with entry %d', $itemIndex), $output::VERBOSITY_VERBOSE);
 
             $dsn = Dsn::createFromString($entry->getDsn());
             if ($entry->isTransaction()) {
@@ -110,8 +112,13 @@ class FlushCommand extends Command
                 $sentryClient && $sentryClient->captureException($clientErrorException);
             }
 
-            $i--;
+            $output->writeln(sprintf('done with at %d', $itemIndex), $output::VERBOSITY_VERBOSE);
         } while ($i > 0);
+
+        $output->writeln('<info>done</info>', $output::VERBOSITY_VERBOSE);
+        if ($i <= 0) {
+            $output->writeln('<warning>there could be more entries</warning>', $output::VERBOSITY_VERBOSE);
+        }
 
         return Command::SUCCESS;
     }

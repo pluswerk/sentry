@@ -14,6 +14,8 @@ use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function Sentry\init;
+
 class ScopeConfig
 {
     public function apply(Scope $scope): void
@@ -31,7 +33,7 @@ class ScopeConfig
     {
         return [
             'typo3_version' => (new Typo3Version())->getVersion(),
-            'typo3_mode' => $this->getApplicationType()?->value ?? 'cli',
+            'typo3_mode' => $this->getApplicationTypeString(),
             'php_version' => PHP_VERSION,
             'application_context' => (string)Environment::getContext(),
         ];
@@ -53,19 +55,18 @@ class ScopeConfig
         $userAspect = null;
         $userAuthentication = null;
 
-        $user = [];
-        switch ($this->getApplicationType()?->value) {
-            case ApplicationType::FRONTEND:
-                $userAspect = GeneralUtility::makeInstance(Context::class)->getAspect('frontend.user');
-                $userAuthentication = $GLOBALS['TSFE']->fe_user;
-                break;
-            case ApplicationType::BACKEND:
-                $userAspect = GeneralUtility::makeInstance(Context::class)->getAspect('backend.user');
-                $userAuthentication = $GLOBALS['BE_USER'];
-                break;
+        $applicationType = $this->getApplicationType();
+
+        if ($applicationType?->isFrontend()) {
+            $userAspect = GeneralUtility::makeInstance(Context::class)->getAspect('frontend.user');
+            $userAuthentication = $GLOBALS['TSFE']->fe_user;
+        } elseif ($applicationType?->isBackend()) {
+            $userAspect = GeneralUtility::makeInstance(Context::class)->getAspect('backend.user');
+            $userAuthentication = $GLOBALS['BE_USER'];
         }
 
-        if ($userAspect?->isLoggedIn()) {
+        $user = [];
+        if ($userAspect instanceof UserAspect && $userAspect->isLoggedIn()) {
             $user['username'] = $userAspect->get('username');
             if ($userAuthentication instanceof AbstractUserAuthentication && isset($userAuthentication->user['email'])) {
                 $user['email'] = $userAuthentication->user['email'];
@@ -82,5 +83,19 @@ class ScopeConfig
         }
 
         return null;
+    }
+
+    private function getApplicationTypeString(): string
+    {
+        $applicationType = $this->getApplicationType();
+        if ($applicationType?->isFrontend()) {
+            return 'frontend';
+        }
+
+        if ($applicationType?->isBackend()) {
+            return 'backend';
+        }
+
+        return 'cli';
     }
 }
