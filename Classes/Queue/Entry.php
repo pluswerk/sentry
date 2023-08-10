@@ -9,15 +9,8 @@ use Sentry\EventType;
 
 class Entry implements JsonSerializable
 {
-    private string $dsn;
-    private string $payload;
-    private string $type;
-
-    public function __construct(string $dsn, string $type, string $payload)
+    public function __construct(private string $dsn, private string $type, private string $payload)
     {
-        $this->dsn = $dsn;
-        $this->type = $type;
-        $this->payload = $payload;
     }
 
     public function getDsn(): string
@@ -35,6 +28,9 @@ class Entry implements JsonSerializable
         return $this->type === (string)EventType::transaction();
     }
 
+    /**
+     * @return array{dsn: string, type: string, payload: string}
+     */
     public function jsonSerialize(): array
     {
         return [

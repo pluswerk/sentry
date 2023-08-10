@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Logger;
 
+use Sentry\ClientInterface;
 use Pluswerk\Sentry\Service\Sentry;
 use Sentry\Severity;
 use Sentry\State\Scope;
@@ -21,45 +22,36 @@ class SentryLogger extends AbstractWriter implements SingletonInterface
     public function writeLog(LogRecord $record): WriterInterface
     {
         $client = Sentry::getInstance()->getClient();
-        if (null === $client) {
+        if (!$client instanceof ClientInterface) {
             return $this;
         }
 
-        if (
-            $record->getComponent() !== 'TYPO3.CMS.Frontend.ContentObject.Exception.ProductionExceptionHandler' &&
-            ExtensionManagementUtility::isLoaded('sentry')
-        ) {
-            withScope(
-                function (Scope $scope) use ($record, $client): void {
-                    $scope->setExtra('component', $record->getComponent());
-                    if ($record->getData()) {
-                        $scope->setExtra('data', $record->getData());
-                    }
-                    $scope->setTag('source', 'logwriter');
-
-                    switch ($record->getLevel()) {
-                        case LogLevel::DEBUG:
-                            $severity = Severity::debug();
-                            break;
-                        case LogLevel::WARNING:
-                            $severity = Severity::warning();
-                            break;
-                        case LogLevel::ALERT:
-                        case LogLevel::ERROR:
-                            $severity = Severity::error();
-                            break;
-                        case LogLevel::NOTICE:
-                        case LogLevel::INFO:
-                            $severity = Severity::info();
-                            break;
-                        default:
-                            $severity = Severity::fatal();
-                    }
-
-                    $client->captureMessage($record->getMessage(), $severity, $scope);
-                }
-            );
+        if ($record->getComponent() === 'TYPO3.CMS.Frontend.ContentObject.Exception.ProductionExceptionHandler') {
+            return $this;
         }
+
+        if (!ExtensionManagementUtility::isLoaded('sentry')) {
+            return $this;
+        }
+
+        withScope(
+            static function (Scope $scope) use ($record, $client): void {
+                $scope->setExtra('component', $record->getComponent());
+                if ($record->getData()) {
+                    $scope->setExtra('data', $record->getData());
+                }
+
+                $scope->setTag('source', 'logwriter');
+                $severity = match ($record->getLevel()) {
+                    LogLevel::DEBUG => Severity::debug(),
+                    LogLevel::WARNING => Severity::warning(),
+                    LogLevel::ALERT, LogLevel::ERROR => Severity::error(),
+                    LogLevel::NOTICE, LogLevel::INFO => Severity::info(),
+                    default => Severity::fatal(),
+                };
+                $client->captureMessage($record->getMessage(), $severity, $scope);
+            }
+        );
         return $this;
     }
 }

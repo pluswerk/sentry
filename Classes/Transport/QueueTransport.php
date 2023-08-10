@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Transport;
 
+use Sentry\Dsn;
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Promise\RejectedPromise;
@@ -19,22 +20,15 @@ use Sentry\Transport\TransportInterface;
 
 class QueueTransport implements TransportInterface
 {
-    private Options $options;
-    private PayloadSerializerInterface $payloadSerializer;
-    private QueueInterface $queue;
-
-    public function __construct(Options $options, PayloadSerializerInterface $payloadSerializer, QueueInterface $queue)
+    public function __construct(private Options $options, private PayloadSerializerInterface $payloadSerializer, private QueueInterface $queue)
     {
-        $this->options = $options;
-        $this->payloadSerializer = $payloadSerializer;
-        $this->queue = $queue;
     }
 
     public function send(Event $event): PromiseInterface
     {
         $dsn = $this->options->getDsn();
 
-        if (null === $dsn) {
+        if (!$dsn) {
             return new RejectedPromise(new RuntimeException(sprintf('The DSN option must be set to use the "%s" transport.', self::class)));
         }
 
