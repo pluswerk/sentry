@@ -15,6 +15,8 @@ use Sentry\Event;
 use Sentry\Options;
 use Sentry\Response;
 use Sentry\ResponseStatus;
+use Sentry\SentrySdk;
+use Sentry\Serializer\PayloadSerializer;
 use Sentry\Serializer\PayloadSerializerInterface;
 use Sentry\Transport\TransportInterface;
 

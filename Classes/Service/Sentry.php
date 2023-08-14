@@ -47,9 +47,8 @@ class Sentry implements SingletonInterface
         }
 
         if ($this->config->isQueueEnabled()) {
-            $transportFactory = new TransportFactory();
             $builder = ClientBuilder::create(array_filter($options));
-            $builder->setTransportFactory($transportFactory);
+            $builder->setTransportFactory(new TransportFactory());
             SentrySdk::getCurrentHub()->bindClient($builder->getClient());
         } else {
             init(array_filter($options));
