@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Command;
 
+use Exception;
+use GuzzleHttp\Exception\ClientException;
+use GuzzleHttp\Exception\RequestException;
 use Http\Client\HttpAsyncClient;
 use Jean85\Exception\VersionMissingExceptionInterface;
 use Http\Client\Common\Exception\ClientErrorException;
@@ -73,7 +76,7 @@ class FlushCommand extends Command
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -107,8 +110,12 @@ class FlushCommand extends Command
 
             $client = $this->getClient($entry);
             try {
-                $client->sendAsyncRequest($request)->wait();
-            } catch (ClientErrorException $clientErrorException) {
+                $response =  $client->sendAsyncRequest($request)->wait();
+                // fallback for then sendRequest is not throwing ClientErrorException
+                if ($response->getStatusCode() >= 400) {
+                    throw RequestException::create($request, $response);
+                }
+            } catch (ClientException | ClientErrorException $clientErrorException) {
                 $sentryClient && $sentryClient->captureException($clientErrorException);
             }
 
