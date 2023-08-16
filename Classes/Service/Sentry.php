@@ -45,13 +45,12 @@ class Sentry implements SingletonInterface
             $options['release'] = shell_exec('git rev-parse HEAD');
         }
 
+        $builder = ClientBuilder::create(array_filter($options));
         if ($this->config->isQueueEnabled()) {
-            $builder = ClientBuilder::create(array_filter($options));
             $builder->setTransportFactory(new TransportFactory());
-            SentrySdk::getCurrentHub()->bindClient($builder->getClient());
-        } else {
-            init(array_filter($options));
         }
+
+        SentrySdk::getCurrentHub()->bindClient($builder->getClient());
 
         configureScope(fn(Scope $scope) => $this->scopeConfig->apply($scope));
     }
