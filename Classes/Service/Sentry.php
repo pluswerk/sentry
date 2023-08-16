@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Service;
 
-use TYPO3\CMS\Core\Configuration\Exception\ExtensionConfigurationExtensionNotConfiguredException;
 use Pluswerk\Sentry\Transport\TransportFactory;
 use Sentry\ClientBuilder;
 use Sentry\ClientInterface;
