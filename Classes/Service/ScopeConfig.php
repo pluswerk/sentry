@@ -8,13 +8,10 @@ use Psr\Http\Message\ServerRequestInterface;
 use Sentry\State\Scope;
 use TYPO3\CMS\Core\Authentication\AbstractUserAuthentication;
 use TYPO3\CMS\Core\Context\Context;
-use TYPO3\CMS\Core\Context\UserAspect;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Information\Typo3Version;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-use function Sentry\init;
 
 class ScopeConfig
 {
@@ -48,32 +45,35 @@ class ScopeConfig
     }
 
     /**
-     * @return array{username: string, email: string}|array{}
+     * @return array{username: string, id?: string, email?: string}|array{}
      */
     protected function getUserContext(): array
     {
-        $userAspect = null;
+        $username = null;
         $userAuthentication = null;
 
-        $applicationType = $this->getApplicationType();
+        $applicationType = $this->getApplicationTypeString();
 
-        if ($applicationType?->isFrontend()) {
-            $userAspect = GeneralUtility::makeInstance(Context::class)->getAspect('frontend.user');
+        if ($applicationType === 'frontend') {
+            $username = GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'username');
             $userAuthentication = $GLOBALS['TSFE']->fe_user;
-        } elseif ($applicationType?->isBackend()) {
-            $userAspect = GeneralUtility::makeInstance(Context::class)->getAspect('backend.user');
+        }
+
+        if ($applicationType !== 'cli' && !$username) {
+            $username = GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('backend.user', 'username');
             $userAuthentication = $GLOBALS['BE_USER'];
         }
 
         $user = [];
-        if ($userAspect instanceof UserAspect && $userAspect->isLoggedIn()) {
-            $user['username'] = $userAspect->get('username');
-            if ($userAuthentication instanceof AbstractUserAuthentication && isset($userAuthentication->user['email'])) {
-                $user['email'] = $userAuthentication->user['email'];
+        if ($username) {
+            $user['username'] = $username;
+            if ($userAuthentication instanceof AbstractUserAuthentication && is_array($userAuthentication->user)) {
+                $user['id'] = $userAuthentication->user_table . ':' . ($userAuthentication->user['uid'] ?? null);
+                $user['email'] = $userAuthentication->user['email'] ?? null;
             }
         }
 
-        return $user;
+        return array_filter($user);
     }
 
     protected function getApplicationType(): ?ApplicationType

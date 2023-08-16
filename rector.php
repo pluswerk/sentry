@@ -32,6 +32,7 @@ return static function (RectorConfig $rectorConfig): void {
         [
             ...RectorSettings::skip(),
             ...RectorSettings::skipTypo3(),
+
             FinalizeClassesWithoutChildrenRector::class,
             /**
              * rector should not touch these files
