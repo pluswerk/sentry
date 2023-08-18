@@ -56,12 +56,12 @@ class ScopeConfig
 
         if ($applicationType === 'frontend') {
             $username = GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('frontend.user', 'username');
-            $userAuthentication = $GLOBALS['TSFE']->fe_user;
+            $userAuthentication = ($GLOBALS['TSFE'] ?? null)?->fe_user;
         }
 
         if ($applicationType !== 'cli' && !$username) {
             $username = GeneralUtility::makeInstance(Context::class)->getPropertyFromAspect('backend.user', 'username');
-            $userAuthentication = $GLOBALS['BE_USER'];
+            $userAuthentication = $GLOBALS['BE_USER'] ?? null;
         }
 
         $user = [];
