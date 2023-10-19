@@ -32,13 +32,13 @@
   },
   "config": {
     "allow-plugins": {
-      "typo3/cms-composer-installers": true,
-      "typo3/class-alias-loader": true,
-      "phpro/grumphp": true,
-      "pluswerk/grumphp-config": true,
-      "phpstan/extension-installer": true,
+      "ergebnis/composer-normalize": true,
       "php-http/discovery": true,
-      "ergebnis/composer-normalize": true
+      "phpro/grumphp": true,
+      "phpstan/extension-installer": true,
+      "pluswerk/grumphp-config": true,
+      "typo3/class-alias-loader": true,
+      "typo3/cms-composer-installers": true
     },
     "sort-packages": true
   },

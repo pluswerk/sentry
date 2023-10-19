@@ -12,6 +12,7 @@ use Pluswerk\Sentry\Queue\Entry;
 use Pluswerk\Sentry\Queue\QueueInterface;
 use RuntimeException;
 use Sentry\Event;
+use Sentry\EventType;
 use Sentry\Options;
 use Sentry\Response;
 use Sentry\ResponseStatus;
@@ -36,7 +37,12 @@ class QueueTransport implements TransportInterface
 
         $serializedPayload = $this->payloadSerializer->serialize($event);
 
-        $entry = new Entry((string)$dsn, (string)$event->getType(), $serializedPayload);
+        $eventType = $event->getType();
+        $isEnvelop = $this->options->isTracingEnabled() ||
+            EventType::transaction() === $eventType ||
+            EventType::checkIn() === $eventType;
+
+        $entry = new Entry((string)$dsn, $isEnvelop, $serializedPayload);
         $this->queue->push($entry);
 
         $sendResponse = new Response(ResponseStatus::createFromHttpStatusCode(200));

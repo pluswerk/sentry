@@ -7,6 +7,9 @@ enable_git_hash_releases = 1
 # cat=sentry; type=string; label=Change sentry organisation
 sentry_organisation = sentry
 
+# cat=sentry; type=string; label=Breadcrumb log level (emergency, alert, critical, error, warning, notice, info, debug)
+breadcrumb_log_level = debug
+
 # cat=sentry; type=string; label=Set custom DSN (replaces SENTRY_DSN env)
 sentry_dsn =
 

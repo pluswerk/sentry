@@ -9,7 +9,7 @@ use Sentry\EventType;
 
 class Entry implements JsonSerializable
 {
-    public function __construct(private string $dsn, private string $type, private string $payload)
+    public function __construct(private string $dsn, private bool $isEnvelope, private string $payload)
     {
     }
 
@@ -23,19 +23,19 @@ class Entry implements JsonSerializable
         return $this->payload;
     }
 
-    public function isTransaction(): bool
+    public function isEnvelope(): bool
     {
-        return $this->type === (string)EventType::transaction();
+        return $this->isEnvelope;
     }
 
     /**
-     * @return array{dsn: string, type: string, payload: string}
+     * @return array{dsn: string, isEnvelope: bool, payload: string}
      */
     public function jsonSerialize(): array
     {
         return [
             'dsn' => $this->dsn,
-            'type' => $this->type,
+            'isEnvelope' => $this->isEnvelope,
             'payload' => $this->payload,
         ];
     }

@@ -73,11 +73,11 @@ class FileQueue implements QueueInterface
                 return null;
             }
 
-            if (!isset($data['dsn'], $data['type'], $data['payload'])) {
+            if (!isset($data['dsn'], $data['isEnvelope'], $data['payload'])) {
                 return null;
             }
 
-            return new Entry($data['dsn'], $data['type'], $data['payload']);
+            return new Entry($data['dsn'], $data['isEnvelope'], $data['payload']);
         }
 
         return null;
