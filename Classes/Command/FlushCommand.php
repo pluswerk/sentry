@@ -98,7 +98,7 @@ class FlushCommand extends Command
             $output->writeln(sprintf('start with entry %d', $itemIndex), $output::VERBOSITY_VERBOSE);
 
             $dsn = Dsn::createFromString($entry->getDsn());
-            if ($entry->isTransaction()) {
+            if ($entry->isEnvelope()) {
                 $request = $requestFactory->createRequest('POST', $dsn->getEnvelopeApiEndpointUrl())
                     ->withHeader('Content-Type', 'application/x-sentry-envelope')
                     ->withBody($streamFactory->createStream($entry->getPayload()));
@@ -116,6 +116,7 @@ class FlushCommand extends Command
                     throw RequestException::create($request, $response);
                 }
             } catch (ClientException | ClientErrorException $clientErrorException) {
+                $output->writeln(sprintf('<error>could not send to sentry: %s</error>', $clientErrorException->getMessage()), $output::VERBOSITY_QUIET);
                 $sentryClient && $sentryClient->captureException($clientErrorException);
             }
 

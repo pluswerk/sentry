@@ -8,6 +8,7 @@ use Pluswerk\Sentry\Transport\TransportFactory;
 use Sentry\ClientBuilder;
 use Sentry\ClientInterface;
 use Sentry\SentrySdk;
+use Sentry\State\HubInterface;
 use Sentry\State\Scope;
 use Throwable;
 use TYPO3\CMS\Core\Core\Environment;
@@ -66,6 +67,11 @@ class Sentry implements SingletonInterface
     public function getClient(): ?ClientInterface
     {
         return SentrySdk::getCurrentHub()->getClient();
+    }
+
+    public function getHub(): ?HubInterface
+    {
+        return SentrySdk::getCurrentHub();
     }
 
     public function withScope(Throwable $exception, callable $withScope = null): void
