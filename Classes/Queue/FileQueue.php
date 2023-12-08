@@ -15,7 +15,7 @@ class FileQueue implements QueueInterface
 {
     private string $directory;
 
-    public function __construct(private int $limit, private bool $compress = true)
+    public function __construct(private int $limit = 10000, private bool $compress = true)
     {
         $this->directory = Environment::getVarPath() . '/tx_plussentry_queue/';
         if (!file_exists($this->directory)) {

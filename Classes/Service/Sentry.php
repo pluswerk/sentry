@@ -11,13 +11,13 @@ use Sentry\SentrySdk;
 use Sentry\State\HubInterface;
 use Sentry\State\Scope;
 use Throwable;
+use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 use function Sentry\captureException;
 use function Sentry\configureScope;
-use function Sentry\init;
 use function Sentry\withScope;
 
 class Sentry implements SingletonInterface
@@ -61,7 +61,18 @@ class Sentry implements SingletonInterface
      */
     public static function getInstance(): self
     {
-        return GeneralUtility::makeInstance(Sentry::class);
+        if (GeneralUtility::getContainer()->has(Sentry::class)) {
+            return GeneralUtility::makeInstance(Sentry::class);
+        }
+
+        return GeneralUtility::makeInstance(
+            Sentry::class,
+            GeneralUtility::makeInstance(ScopeConfig::class),
+            GeneralUtility::makeInstance(
+                ConfigService::class,
+                GeneralUtility::makeInstance(ExtensionConfiguration::class)
+            )
+        );
     }
 
     public function getClient(): ?ClientInterface
