@@ -13,7 +13,7 @@ trait ExceptionHandlerTrait
     {
         try {
             Sentry::getInstance()->withScope($exception);
-        } catch (\Throwable) {
+        } catch (Throwable) {
             //ignore $sentryError
         }
 

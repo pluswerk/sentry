@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Logger;
 
+use Exception;
 use Psr\Log\LogLevel;
 use Sentry\Breadcrumb;
 use Pluswerk\Sentry\Service\Sentry;
@@ -39,7 +40,7 @@ class BreadcrumbLogger extends AbstractWriter implements SingletonInterface
                     LogLevel::NOTICE => Breadcrumb::LEVEL_INFO,
                     LogLevel::INFO => Breadcrumb::LEVEL_INFO,
                     LogLevel::DEBUG => Breadcrumb::LEVEL_DEBUG,
-                    default => throw new \Exception(sprintf('Log level not supported "%s"', $record->getLevel())),
+                    default => throw new Exception(sprintf('Log level not supported "%s"', $record->getLevel())),
                 },
                 Breadcrumb::TYPE_DEFAULT,
                 $record->getComponent(),
