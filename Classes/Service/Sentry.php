@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Service;
 
+use InvalidArgumentException;
 use Pluswerk\Sentry\Transport\TransportFactory;
 use Sentry\ClientBuilder;
 use Sentry\ClientInterface;
@@ -57,7 +58,7 @@ class Sentry implements SingletonInterface
     }
 
     /**
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public static function getInstance(): self
     {

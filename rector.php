@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
 use PLUS\GrumPHPConfig\RectorSettings;
 use Rector\Config\RectorConfig;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
@@ -34,6 +35,7 @@ return static function (RectorConfig $rectorConfig): void {
             ...RectorSettings::skipTypo3(),
 
             FinalizeClassesWithoutChildrenRector::class,
+            ReadOnlyPropertyRector::class,
             /**
              * rector should not touch these files
              */
