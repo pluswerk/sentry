@@ -26,5 +26,4 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.php }}-composer-
       - run: composer require typo3/minimal="^${{ matrix.typo3 }}" --dev
-      - run: composer install --no-interaction --no-progress
       - run: ./vendor/bin/grumphp run --ansi

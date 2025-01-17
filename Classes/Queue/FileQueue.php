@@ -113,6 +113,7 @@ class FileQueue implements QueueInterface
         }
 
         @fwrite($fp, $data);
+        @GeneralUtility::fixPermissions($fileName);
         @fclose($fp);
     }
 }
