@@ -6,7 +6,6 @@ use Rector\Php81\Rector\Property\ReadOnlyPropertyRector;
 use PLUS\GrumPHPConfig\RectorSettings;
 use Rector\Config\RectorConfig;
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
-use Rector\Privatization\Rector\Class_\FinalizeClassesWithoutChildrenRector;
 
 return static function (RectorConfig $rectorConfig): void {
     $rectorConfig->parallel();
@@ -34,7 +33,6 @@ return static function (RectorConfig $rectorConfig): void {
             ...RectorSettings::skip(),
             ...RectorSettings::skipTypo3(),
 
-            FinalizeClassesWithoutChildrenRector::class,
             ReadOnlyPropertyRector::class,
             /**
              * rector should not touch these files
