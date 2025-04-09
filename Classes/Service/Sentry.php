@@ -89,10 +89,11 @@ class Sentry implements SingletonInterface
         return static function (Event $event, ?EventHint $hint): ?Event {
             $ignoredErrors = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['sentry']['ignore_error_codes'];
             foreach ($ignoredErrors as $errorCode) {
-                if ($hint && $hint->exception->getCode() === $errorCode) {
+                if ($hint && $hint->exception?->getCode() === $errorCode) {
                     return null;
                 }
             }
+
             return $event;
         };
     }
