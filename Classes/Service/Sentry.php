@@ -8,6 +8,8 @@ use InvalidArgumentException;
 use Pluswerk\Sentry\Transport\TransportFactory;
 use Sentry\ClientBuilder;
 use Sentry\ClientInterface;
+use Sentry\Event;
+use Sentry\EventHint;
 use Sentry\SentrySdk;
 use Sentry\State\HubInterface;
 use Sentry\State\Scope;
@@ -41,6 +43,7 @@ class Sentry implements SingletonInterface
             'dsn' => $this->config->getDsn(),
             'attach_stacktrace' => true,
             'error_types' => $this->config->getErrorsToReport(),
+            'before_send' => $this->getBeforeSend(),
         ];
 
         if ($this->config->isWithGitReleases()) {
@@ -79,6 +82,19 @@ class Sentry implements SingletonInterface
     public function getClient(): ?ClientInterface
     {
         return SentrySdk::getCurrentHub()->getClient();
+    }
+
+    public function getBeforeSend(): callable
+    {
+        return static function (Event $event, ?EventHint $hint): ?Event {
+            $ignoredErrors = $GLOBALS['TYPO3_CONF_VARS']['EXTENSIONS']['sentry']['ignore_error_codes'];
+            foreach ($ignoredErrors as $errorCode) {
+                if ($hint && $hint->exception->getCode() === $errorCode) {
+                    return null;
+                }
+            }
+            return $event;
+        };
     }
 
     public function getHub(): ?HubInterface
