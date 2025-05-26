@@ -133,8 +133,8 @@ class FlushCommand extends Command
                 $output->writeln(sprintf('<error>could not send to sentry: %s</error>', $clientErrorException->getMessage()), $output::VERBOSITY_QUIET);
                 $sentryClient && $sentryClient->captureException($clientErrorException);
                 if ($clientErrorException->getResponse()->getStatusCode() === 429) {
-                    $output->writeln('<error>Rate limit reached, waiting for sentry to recover sleep(1s)</error>', $output::VERBOSITY_QUIET);
-                    sleep(1); // wait for sentry to recover
+                    $output->writeln('<error>Rate limit reached, waiting for sentry to recover sleep(5s)</error>', $output::VERBOSITY_QUIET);
+                    sleep(5); // wait for sentry to recover
                 }
             }
 
