@@ -45,7 +45,7 @@ class ScopeConfig
     }
 
     /**
-     * @return array{username: string, id?: string, email?: string}|array{}
+     * @return array{username: string, id: non-falsy-string, email: non-falsy-string}|array{username: string, id: non-falsy-string}|array{username: string}|array{}
      */
     protected function getUserContext(): array
     {
@@ -64,16 +64,25 @@ class ScopeConfig
             $userAuthentication = $GLOBALS['BE_USER'] ?? null;
         }
 
-        $user = [];
-        if ($username) {
-            $user['username'] = $username;
-            if ($userAuthentication instanceof AbstractUserAuthentication && is_array($userAuthentication->user)) {
-                $user['id'] = $userAuthentication->user_table . ':' . ($userAuthentication->user['uid'] ?? null);
-                $user['email'] = $userAuthentication->user['email'] ?? null;
-            }
+        if (!$username || !is_string($username)) {
+            return [];
         }
 
-        return array_filter($user);
+        $user = [];
+        $user['username'] = $username;
+        if (!$userAuthentication instanceof AbstractUserAuthentication || !is_array($userAuthentication->user)) {
+            return $user;
+        }
+
+        $user['id'] = $userAuthentication->user_table . ':' . ($userAuthentication->user['uid'] ?? null);
+
+        $email = $userAuthentication->user['email'] ?? null;
+        if (!$email) {
+            return $user;
+        }
+
+        $user['email'] = $email;
+        return $user;
     }
 
     protected function getApplicationType(): ?ApplicationType

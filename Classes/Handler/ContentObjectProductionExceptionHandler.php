@@ -6,36 +6,31 @@ namespace Pluswerk\Sentry\Handler;
 
 use Exception;
 use Pluswerk\Sentry\Service\ConfigService;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Throwable;
+use TYPO3\CMS\Frontend\ContentObject\Exception\ExceptionHandlerInterface;
 use TYPO3\CMS\Frontend\ContentObject\Exception\ProductionExceptionHandler;
 use Pluswerk\Sentry\Service\Sentry;
 use Sentry\SentrySdk;
 use Sentry\State\Scope;
 use TYPO3\CMS\Frontend\ContentObject\AbstractContentObject;
-use Psr\Log\LoggerInterface;
-use TYPO3\CMS\Core\Context\Context;
-use TYPO3\CMS\Core\Crypto\Random;
 
-class ContentObjectProductionExceptionHandler extends ProductionExceptionHandler
+class ContentObjectProductionExceptionHandler implements ExceptionHandlerInterface
 {
     public function __construct(
-        Context $context,
-        Random $random,
-        LoggerInterface $logger,
+        protected ProductionExceptionHandler $productionExceptionHandler,
         protected ConfigService $configService,
     ) {
-        parent::__construct($context, $random, $logger);
     }
 
     /**
-     * @param AbstractContentObject|null $contentObject
      * @param array<string, mixed> $contentObjectConfiguration
      * @throws Exception
      */
-    public function handle(Exception $exception, AbstractContentObject $contentObject = null, $contentObjectConfiguration = []): string
+    public function handle(Exception $exception, ?AbstractContentObject $contentObject = null, $contentObjectConfiguration = []): string
     {
         // if parent class rethrows the exception the ProductionExceptionHandler will handle the Exception
-        $result = parent::handle($exception, $contentObject, $contentObjectConfiguration);
+        $result = $this->productionExceptionHandler->handle($exception, $contentObject, $contentObjectConfiguration);
 
         $oopsCode = $this->getOopsCodeFromResult($result);
         try {
@@ -47,13 +42,13 @@ class ContentObjectProductionExceptionHandler extends ProductionExceptionHandler
         return $result . $this->getLink($oopsCode);
     }
 
-    public function getOopsCodeFromResult(string $result): string
+    private function getOopsCodeFromResult(string $result): string
     {
         $explode = explode(' ', $result);
         return $explode[array_key_last($explode)];
     }
 
-    public function getLink(string $oopsCode): string
+    private function getLink(string $oopsCode): string
     {
         $dsn = SentrySdk::getCurrentHub()->getClient()?->getOptions()->getDsn();
         if (!$dsn) {
@@ -66,5 +61,13 @@ class ContentObjectProductionExceptionHandler extends ProductionExceptionHandler
         $projectId = $dsn->getProjectId();
         $url = $schema . '://' . $host . '/organizations/' . $organizationName . '/issues/?project=' . $projectId . '&query=oops_code%3A' . $oopsCode;
         return '<a target="_blank" href="' . $url . '" style="text-decoration: none !important;">&nbsp;</a>';
+    }
+
+    /**
+     * @param array<array-key, mixed> $configuration
+     */
+    public function setConfiguration(array $configuration): void
+    {
+        $this->productionExceptionHandler->setConfiguration($configuration);
     }
 }

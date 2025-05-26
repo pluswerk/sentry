@@ -86,7 +86,7 @@ class Sentry implements SingletonInterface
         return SentrySdk::getCurrentHub();
     }
 
-    public function withScope(Throwable $exception, callable $withScope = null): void
+    public function withScope(Throwable $exception, ?callable $withScope = null): void
     {
         $withScope ??= static fn(Scope $scope) => null;
         withScope(
