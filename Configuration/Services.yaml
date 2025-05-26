@@ -37,7 +37,11 @@ services:
         command: 'pluswerk:sentry:flush'
         description: 'Transports potentially queued events'
 
+  pluswerk.sentry.original.contentObject.productionExceptionHandler:
+    class: TYPO3\CMS\Frontend\ContentObject\Exception\ProductionExceptionHandler
   TYPO3\CMS\Frontend\ContentObject\Exception\ProductionExceptionHandler:
     class: Pluswerk\Sentry\Handler\ContentObjectProductionExceptionHandler
     public: true
     shared: false
+    arguments:
+      $productionExceptionHandler: '@pluswerk.sentry.original.contentObject.productionExceptionHandler'

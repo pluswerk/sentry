@@ -7,14 +7,15 @@ namespace Pluswerk\Sentry\Command;
 use Exception;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\RequestException;
-use Http\Client\HttpAsyncClient;
-use Jean85\Exception\VersionMissingExceptionInterface;
 use Http\Client\Common\Exception\ClientErrorException;
+use Http\Client\HttpAsyncClient;
 use Http\Discovery\Psr17FactoryDiscovery;
+use Jean85\Exception\VersionMissingExceptionInterface;
 use Jean85\PrettyVersions;
 use Pluswerk\Sentry\Queue\Entry;
 use Pluswerk\Sentry\Queue\QueueInterface;
 use Pluswerk\Sentry\Service\Sentry;
+use Psr\Http\Message\ResponseInterface;
 use Sentry\Client;
 use Sentry\Dsn;
 use Sentry\HttpClient\HttpClientFactory;
@@ -24,6 +25,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+
+use function assert;
+use function sprintf;
+use function usleep;
 
 class FlushCommand extends Command
 {
@@ -45,6 +50,7 @@ class FlushCommand extends Command
     {
         parent::configure();
         $this->addOption('limit-items', null, InputOption::VALUE_REQUIRED, 'How much queue entries should be processed', 60);
+        $this->addOption('req-per-sec', null, InputOption::VALUE_REQUIRED, 'How many requests per second should be sent', 5);
     }
 
     /**
@@ -84,9 +90,17 @@ class FlushCommand extends Command
         $requestFactory = Psr17FactoryDiscovery::findRequestFactory();
         $sentryClient = Sentry::getInstance()->getClient();
 
-        $i = (int)$input->getOption('limit-items');
+        $option = $input->getOption('limit-items');
+        assert(is_string($option) || is_int($option));
+        $reqPerSec = $input->getOption('req-per-sec');
+        assert(is_string($reqPerSec) || is_int($reqPerSec));
+        $reqPerSec = (int)$reqPerSec;
+        $i = (int)$option;
+        $option = (int)$option;
         $output->writeln(sprintf('running with limit-items=%d', $i), $output::VERBOSITY_VERBOSE);
+        $output->writeln(sprintf('to do: %d queued entries', $this->queue->count() ?? -1), $output::VERBOSITY_VERBOSE);
 
+        $lastTime = microtime(true);
         do {
             $entry = $this->queue->pop();
             if (!$entry instanceof Entry) {
@@ -94,7 +108,7 @@ class FlushCommand extends Command
             }
 
             $i--;
-            $itemIndex = $input->getOption('limit-items') - $i;
+            $itemIndex = $option - $i;
             $output->writeln(sprintf('start with entry %d', $itemIndex), $output::VERBOSITY_VERBOSE);
 
             $dsn = Dsn::createFromString($entry->getDsn());
@@ -112,15 +126,28 @@ class FlushCommand extends Command
             try {
                 $response =  $client->sendAsyncRequest($request)->wait();
                 // fallback for then sendRequest is not throwing ClientErrorException
-                if ($response->getStatusCode() >= 400) {
+                if ($response instanceof ResponseInterface && $response->getStatusCode() >= 400) {
                     throw RequestException::create($request, $response);
                 }
             } catch (ClientException | ClientErrorException $clientErrorException) {
                 $output->writeln(sprintf('<error>could not send to sentry: %s</error>', $clientErrorException->getMessage()), $output::VERBOSITY_QUIET);
                 $sentryClient && $sentryClient->captureException($clientErrorException);
+                if ($clientErrorException->getResponse()->getStatusCode() === 429) {
+                    $output->writeln('<error>Rate limit reached, waiting for sentry to recover sleep(1s)</error>', $output::VERBOSITY_QUIET);
+                    sleep(1); // wait for sentry to recover
+                }
             }
 
             $output->writeln(sprintf('done with at %d', $itemIndex), $output::VERBOSITY_VERBOSE);
+            if ($i % $reqPerSec === 0) {
+                $toSleep = max(0, (int)(1_000_000 - (microtime(true) - $lastTime) * 1_000_000));
+                if ($toSleep) {
+                    $output->writeln(sprintf('%d req/s (sleep %dms)', $reqPerSec, $toSleep / 1_000), $output::VERBOSITY_VERBOSE);
+                    usleep($toSleep);
+                }
+
+                $lastTime = microtime(true);
+            }
         } while ($i > 0);
 
         $output->writeln('<info>done</info>', $output::VERBOSITY_VERBOSE);

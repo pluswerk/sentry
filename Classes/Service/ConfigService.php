@@ -31,7 +31,12 @@ final class ConfigService
     private function getConfig(string $path): ?string
     {
         try {
-            return $this->configuration->get('sentry', $path) ?: null;
+            $config = $this->configuration->get('sentry', $path);
+            if (!is_string($config)) {
+                return null;
+            }
+
+            return $config ?: null;
         } catch (ExtensionConfigurationPathDoesNotExistException) {
             return null;
         }
@@ -60,7 +65,7 @@ final class ConfigService
         return !$this->isDisabled();
     }
 
-    public function getErrorsToReport(): ?int
+    public function getErrorsToReport(): int
     {
         return (int)(
             $this->getEnv('SENTRY_ERRORS_TO_REPORT')

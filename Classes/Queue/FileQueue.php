@@ -11,6 +11,8 @@ use Throwable;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
+use function is_array;
+
 class FileQueue implements QueueInterface
 {
     private string $directory;
@@ -24,6 +26,12 @@ class FileQueue implements QueueInterface
             } catch (Exception) {
             }
         }
+    }
+
+    public function count(): int
+    {
+        $iterator = new FilesystemIterator($this->directory, FilesystemIterator::SKIP_DOTS);
+        return iterator_count($iterator);
     }
 
     /**
@@ -70,6 +78,10 @@ class FileQueue implements QueueInterface
 
             $data = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
             if (!$data) {
+                return null;
+            }
+
+            if (!is_array($data)) {
                 return null;
             }
 

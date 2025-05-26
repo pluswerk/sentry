@@ -6,6 +6,8 @@ namespace Pluswerk\Sentry\Queue;
 
 interface QueueInterface
 {
+    public function count(): ?int;
+
     public function pop(): ?Entry;
 
     public function push(Entry $entry): void;

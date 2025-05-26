@@ -3,5 +3,5 @@ includes:
   - vendor/andersundsehr/phpstan-git-files/extension.php
 
 parameters:
-  level: 8
+  level: max
   reportUnmatchedIgnoredErrors: false
