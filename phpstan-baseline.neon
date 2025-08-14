@@ -1,2 +1,145 @@
 parameters:
-  ignoreErrors: []
+	ignoreErrors:
+		-
+			message: '#^Cannot access offset ''SYS'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 2
+			path: Classes/Bootstrap.php
+
+		-
+			message: '#^Cannot access offset ''debugExceptionHandler'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: Classes/Bootstrap.php
+
+		-
+			message: '#^Cannot access offset ''productionExceptionHandler'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: Classes/Bootstrap.php
+
+		-
+			message: '#^Parameter \#5 \$metadata of class Sentry\\Breadcrumb constructor expects array\<string, mixed\>, array given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Classes/Logger/BreadcrumbLogger.php
+
+		-
+			message: '#^Parameter \#1 \$dsn of class Pluswerk\\Sentry\\Queue\\Entry constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Classes/Queue/FileQueue.php
+
+		-
+			message: '#^Parameter \#2 \$isEnvelope of class Pluswerk\\Sentry\\Queue\\Entry constructor expects bool, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Classes/Queue/FileQueue.php
+
+		-
+			message: '#^Parameter \#3 \$payload of class Pluswerk\\Sentry\\Queue\\Entry constructor expects string, mixed given\.$#'
+			identifier: argument.type
+			count: 1
+			path: Classes/Queue/FileQueue.php
+
+		-
+			message: '#^Cannot access offset ''SYS'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: Classes/Service/ConfigService.php
+
+		-
+			message: '#^Cannot access offset ''exceptionalErrors'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: Classes/Service/ConfigService.php
+
+		-
+			message: '#^Cannot cast mixed to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: Classes/Service/ConfigService.php
+
+		-
+			message: '#^Method Pluswerk\\Sentry\\Service\\ConfigService\:\:getEnv\(\) should return string\|null but returns mixed\.$#'
+			identifier: return.type
+			count: 1
+			path: Classes/Service/ConfigService.php
+
+		-
+			message: '#^Cannot access offset ''email'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: Classes/Service/ScopeConfig.php
+
+		-
+			message: '#^Cannot access property \$fe_user on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Classes/Service/ScopeConfig.php
+
+		-
+			message: '#^Cannot access property \$user on mixed\.$#'
+			identifier: property.nonObject
+			count: 1
+			path: Classes/Service/ScopeConfig.php
+
+		-
+			message: '#^Cannot call method getAttribute\(\) on mixed\.$#'
+			identifier: method.nonObject
+			count: 1
+			path: Classes/Service/ScopeConfig.php
+
+		-
+			message: '#^Method Pluswerk\\Sentry\\Service\\ScopeConfig\:\:getExtras\(\) should return array\<string, bool\|string\> but returns array\.$#'
+			identifier: return.type
+			count: 1
+			path: Classes/Service/ScopeConfig.php
+
+		-
+			message: '#^Cannot access offset string on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ext_emconf.php
+
+		-
+			message: '#^Cannot access offset ''EXTENSIONS'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ext_localconf.php
+
+		-
+			message: '#^Cannot access offset ''LOG'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ext_localconf.php
+
+		-
+			message: '#^Cannot access offset ''Pluswerk\\\\Sentry\\\\Logger\\\\BreadcrumbLogger'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ext_localconf.php
+
+		-
+			message: '#^Cannot access offset ''breadcrumb_log_level'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ext_localconf.php
+
+		-
+			message: '#^Cannot access offset ''sentry'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ext_localconf.php
+
+		-
+			message: '#^Cannot access offset ''writerConfiguration'' on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ext_localconf.php
+
+		-
+			message: '#^Cannot access offset mixed on mixed\.$#'
+			identifier: offsetAccess.nonOffsetAccessible
+			count: 1
+			path: ext_localconf.php

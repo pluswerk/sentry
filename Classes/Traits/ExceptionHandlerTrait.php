@@ -6,6 +6,7 @@ namespace Pluswerk\Sentry\Traits;
 
 use Pluswerk\Sentry\Service\Sentry;
 use Throwable;
+use function dd;
 
 trait ExceptionHandlerTrait
 {

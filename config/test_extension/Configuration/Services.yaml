@@ -1,0 +1,22 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+  Pluswerk\SentryTestExtension\:
+    resource: '../Classes/*'
+    exclude: '../Classes/Domain/Model/*'
+  Pluswerk\SentryTestExtension\Command\TestException:
+    tags:
+      -
+        name: console.command
+        command: test-exception
+        description: 'throws a test exception'
+        schedulable: false
+  Pluswerk\SentryTestExtension\Command\SetupDbCommand:
+    tags:
+      -
+        name: console.command
+        command: 'test-extension:setup-db'
+        description: 'Setup testing db'
+        schedulable: false

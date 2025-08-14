@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Pluswerk\Sentry\Transport;
 
-use Sentry\Dsn;
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Promise\RejectedPromise;
@@ -16,8 +15,6 @@ use Sentry\EventType;
 use Sentry\Options;
 use Sentry\Response;
 use Sentry\ResponseStatus;
-use Sentry\SentrySdk;
-use Sentry\Serializer\PayloadSerializer;
 use Sentry\Serializer\PayloadSerializerInterface;
 use Sentry\Transport\TransportInterface;
 

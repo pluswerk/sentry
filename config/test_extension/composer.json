@@ -1,0 +1,15 @@
+{
+  "name": "pluswerk/sentry_test_extension",
+  "description": "makes the test cases possible for the pluswerk/sentry TYPO3 extension",
+  "type": "typo3-cms-extension",
+  "autoload": {
+    "psr-4": {
+      "Pluswerk\\SentryTestExtension\\": "Classes/"
+    }
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "test_extension"
+    }
+  }
+}

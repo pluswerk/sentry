@@ -3,40 +3,31 @@ services:
     autowire: true
     autoconfigure: true
     public: false
-
   Pluswerk\Sentry\Service\:
     resource: '../Classes/Service/*'
     public: true
-
   Pluswerk\Sentry\Queue\:
     resource: '../Classes/Queue/*'
-
   Sentry\Options:
     public: true
-
   Sentry\Serializer\PayloadSerializer:
     public: true
-
   Sentry\Serializer\PayloadSerializerInterface:
     alias: Sentry\Serializer\PayloadSerializer
     public: true
-
   Pluswerk\Sentry\Queue\QueueInterface:
     alias: Pluswerk\Sentry\Queue\FileQueue
     public: true
-
   Pluswerk\Sentry\Queue\FileQueue:
     arguments:
-      # 0 for no limit, positive integer to limit the files created in the queue
       $limit: 10000
       $compress: true
-
   Pluswerk\Sentry\Command\FlushCommand:
     tags:
-      - name: 'console.command'
+      -
+        name: console.command
         command: 'pluswerk:sentry:flush'
         description: 'Transports potentially queued events'
-
   pluswerk.sentry.original.contentObject.productionExceptionHandler:
     class: TYPO3\CMS\Frontend\ContentObject\Exception\ProductionExceptionHandler
   TYPO3\CMS\Frontend\ContentObject\Exception\ProductionExceptionHandler:
@@ -45,3 +36,9 @@ services:
     shared: false
     arguments:
       $productionExceptionHandler: '@pluswerk.sentry.original.contentObject.productionExceptionHandler'
+  Pluswerk\Sentry\EventListener\ConsoleErrorEventListener:
+    tags:
+      -
+        name: event.listener
+        identifier: pluswerk/sentry/console-error-event-listener
+        event: Symfony\Component\Console\Event\ConsoleErrorEvent

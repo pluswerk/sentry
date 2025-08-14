@@ -56,3 +56,79 @@ You can write this in your additional.php if you want all warnings from the TYPO
         SentryLogger::class => [],
     ];
 ```
+
+# Testing
+
+## TODOS:
+
+- [ ] Automated tests + run-test-server
+- [ ] Update to newest sentry SDK version
+- [ ] only catch exceptions once
+
+Idea:
+- use `\Sentry\init()` as early as possbile (HTTP and CLI) And use it always, not only if we handle a LogEntry or Exception.
+- after that you should be able to use `\Sentry\captureException()` and `\Sentry\captureMessage()` in your code. Without the Singleton.
+- Check if the normal error handler of TYPO3 still works.
+- Maybe we do not need to overwrite the TYPO3 ErrorHandlers at all? if we run `\Sentry\init()` at the correct time.
+
+## how to run the tests:
+
+```bash
+composer install
+composer run-test-server
+# different terminal:
+composer test
+````
+
+## Testing setup
+
+Options:
+- local sentry?
+- sentry test server (public)?
+- php script that mocks sentry api?
+- mocking sentry SDK?
+  - Pro: No need for real servers
+  - Con: can not test Queue?
+
+Test setup?
+- Unit test?
+- Functional test? 
+- Integration test !!
+  - We want to test the real integration of EXT:sentry into TYPO3.
+  - Real Webserver, real TYPO3, mocked Sentry
+  - Real Request
+  - Real Response
+  - Real Cli Command
+- mocked api writes to file?
+- test runner reads from file?
+- Test runner needs to be able to
+  - run CLI commands
+  - run Backend requests
+  - run Frontend requests
+  - read files?
+- => best case Test runner: PHPUnit + Guzzle + shell_exec
+
+
+
+## Test cases:
+
+- Test with all compatible TYPO3 versions
+- Test with all compatible PHP versions
+- Test with and without Queue
+
+- Test with frontend User
+- Test with backend User
+- Test with no user
+- 
+- Test in CLI
+- Test in Backend
+- Test in Frontend
+- Test in first middleware
+- Test in last middleware
+- Test in Extbase Action
+- Test in ContentElement (ViewHelper) (ContentObjectProductionExceptionHandler)
+- Test with DebugExceptionHandler
+- Test with ProductionExceptionHandler
+- Test Sentry::getInstance()->getClient()?->captureException(new Exception('Test Exception'));
+- Test throw new Exception('Test Exception');
+- Test Queue

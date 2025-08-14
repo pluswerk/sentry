@@ -32,9 +32,14 @@ class ContentObjectProductionExceptionHandler implements ExceptionHandlerInterfa
         // if parent class rethrows the exception the ProductionExceptionHandler will handle the Exception
         $result = $this->productionExceptionHandler->handle($exception, $contentObject, $contentObjectConfiguration);
 
+        $sentry = Sentry::getInstance();
+        if ($sentry->isDisabled()) {
+            return $result;
+        }
+
         $oopsCode = $this->getOopsCodeFromResult($result);
         try {
-            Sentry::getInstance()->withScope($exception, static fn(Scope $scope): Scope => $scope->setTag('oops_code', $oopsCode));
+            $sentry->withScope($exception, static fn(Scope $scope): Scope => $scope->setTag('oops_code', $oopsCode));
         } catch (Throwable) {
             //ignore $sentryError
         }

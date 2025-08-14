@@ -97,8 +97,8 @@ class FlushCommand extends Command
         $reqPerSec = (int)$reqPerSec;
         $i = (int)$option;
         $option = (int)$option;
-        $output->writeln(sprintf('running with limit-items=%d', $i), $output::VERBOSITY_VERBOSE);
-        $output->writeln(sprintf('to do: %d queued entries', $this->queue->count() ?? -1), $output::VERBOSITY_VERBOSE);
+        $output->writeln(sprintf('running with limit-items=%d', $i), OutputInterface::VERBOSITY_VERBOSE);
+        $output->writeln(sprintf('to do: %d queued entries', $this->queue->count() ?? -1), OutputInterface::VERBOSITY_VERBOSE);
 
         $lastTime = microtime(true);
         do {
@@ -109,7 +109,7 @@ class FlushCommand extends Command
 
             $i--;
             $itemIndex = $option - $i;
-            $output->writeln(sprintf('start with entry %d', $itemIndex), $output::VERBOSITY_VERBOSE);
+            $output->writeln(sprintf('start with entry %d', $itemIndex), OutputInterface::VERBOSITY_VERBOSE);
 
             $dsn = Dsn::createFromString($entry->getDsn());
             if ($entry->isEnvelope()) {
@@ -130,19 +130,19 @@ class FlushCommand extends Command
                     throw RequestException::create($request, $response);
                 }
             } catch (ClientException | ClientErrorException $clientErrorException) {
-                $output->writeln(sprintf('<error>could not send to sentry: %s</error>', $clientErrorException->getMessage()), $output::VERBOSITY_QUIET);
+                $output->writeln(sprintf('<error>could not send to sentry: %s</error>', $clientErrorException->getMessage()), OutputInterface::VERBOSITY_QUIET);
                 $sentryClient && $sentryClient->captureException($clientErrorException);
                 if ($clientErrorException->getResponse()->getStatusCode() === 429) {
-                    $output->writeln('<error>Rate limit reached, waiting for sentry to recover sleep(5s)</error>', $output::VERBOSITY_QUIET);
+                    $output->writeln('<error>Rate limit reached, waiting for sentry to recover sleep(5s)</error>', OutputInterface::VERBOSITY_QUIET);
                     sleep(5); // wait for sentry to recover
                 }
             }
 
-            $output->writeln(sprintf('done with at %d', $itemIndex), $output::VERBOSITY_VERBOSE);
+            $output->writeln(sprintf('done with at %d', $itemIndex), OutputInterface::VERBOSITY_VERBOSE);
             if ($i % $reqPerSec === 0) {
                 $toSleep = max(0, (int)(1_000_000 - (microtime(true) - $lastTime) * 1_000_000));
                 if ($toSleep) {
-                    $output->writeln(sprintf('%d req/s (sleep %dms)', $reqPerSec, $toSleep / 1_000), $output::VERBOSITY_VERBOSE);
+                    $output->writeln(sprintf('%d req/s (sleep %dms)', $reqPerSec, $toSleep / 1_000), OutputInterface::VERBOSITY_VERBOSE);
                     usleep($toSleep);
                 }
 
@@ -150,9 +150,9 @@ class FlushCommand extends Command
             }
         } while ($i > 0);
 
-        $output->writeln('<info>done</info>', $output::VERBOSITY_VERBOSE);
+        $output->writeln('<info>done</info>', OutputInterface::VERBOSITY_VERBOSE);
         if ($i <= 0) {
-            $output->writeln('<warning>there could be more entries</warning>', $output::VERBOSITY_VERBOSE);
+            $output->writeln('<warning>there could be more entries</warning>', OutputInterface::VERBOSITY_VERBOSE);
         }
 
         return Command::SUCCESS;

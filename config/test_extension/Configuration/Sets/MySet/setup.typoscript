@@ -1,0 +1,47 @@
+page500 = PAGE
+page500 {
+  typeNum = 500
+
+  10 = TEXT
+  10.value = If TYPO3_CONTEXT is Production this text is shown. (if Development the ContentObject ProductionExceptionHandler is not used)
+
+  # THIS uses the \TYPO3\CMS\Frontend\ContentObject\Exception\ProductionExceptionHandler
+  666 = USER_INT
+  666.userFunc = Pluswerk\Sentry\Logger\SentryLogger->writeLog
+}
+
+page = PAGE
+page {
+  # The CONTENT object executes a database query and loads the content.
+  10 = CONTENT
+  10 {
+    table = tt_content
+    select {
+
+      # "sorting" is a column from the tt_content table and
+      # keeps track of the sorting order, which was specified in
+      # the backend.
+      orderBy = sorting
+
+      # Only select content from column "0" (the column called
+      # "normal") and quote the database identifier (column name)
+      # "colPos" (indicated by wrapping with {#})
+      where = {#colPos}=0
+    }
+
+    # For every result line from the database query (that means for every content
+    # element) the renderObj is executed and the internal data array is filled
+    # with the content. This ensures that we can call the .field property and we
+    # get the according value.
+    renderObj = COA
+    renderObj {
+
+      10 = TEXT
+
+      # The field tt_content.header normally holds the headline.
+      10.stdWrap.field = header
+
+      10.stdWrap.wrap = <h1>|</h1>
+    }
+  }
+}
