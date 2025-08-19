@@ -1,4 +1,30 @@
-[![GitHub License](https://img.shields.io/github/license/pluswerk/sentry.svg?style=flat-square)](https://github.com/pluswerk/sentry/blob/master/LICENSE.txt)
+# ❌❌❌ DEPRECATED ❌❌❌
+> This extension is deprecated and will not be upgraded to TYPO3 13. ⛔  
+> It is replaced by [andersundsehr/sentry-bridge 😁](https://github.com/andersundsehr/sentry-bridge/).
+
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+- .
+
 
 # Pluswerk TYPO3 Sentry PHP Client
 
