@@ -6,7 +6,6 @@ namespace Pluswerk\Sentry\Handler;
 
 use Exception;
 use Pluswerk\Sentry\Service\ConfigService;
-use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use Throwable;
 use TYPO3\CMS\Frontend\ContentObject\Exception\ExceptionHandlerInterface;
 use TYPO3\CMS\Frontend\ContentObject\Exception\ProductionExceptionHandler;

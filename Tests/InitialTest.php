@@ -42,8 +42,8 @@ class InitialTest extends TestCase
 
         // every exception is send 2 times, once with handled = false and once with handled = true
         foreach($content as $event) {
-            $event->assertSingleException('TypeError', 'Pluswerk\Sentry\Logger\SentryLogger::writeLog(): Argument #1 ($record) must be of type TYPO3\CMS\Core\Log\LogRecord, string given',);
-            $event->assertExceptionFileAndLine('Classes/Logger/SentryLogger.php', 22);
+            $event->assertSingleException('Exception', 'Pluswerk\Sentry\Logger\SentryLogger::writeLog(): Argument #1 ($record) must be of type TYPO3\CMS\Core\Log\LogRecord, string given',);
+            $event->assertExceptionFileAndLine('Classes/ContentObject/ContentObjectRenderer.php', 670);
 
             self::assertEquals([], $event->user, 'Expected no user data in the event');
 
@@ -51,6 +51,7 @@ class InitialTest extends TestCase
             $event->assertExtras(isCli:false);
 
             $categoryFUA = 'TYPO3.CMS.Frontend.Authentication.FrontendUserAuthentication';
+            $categoryPEH = 'TYPO3.CMS.Frontend.ContentObject.Exception.ProductionExceptionHandler';
             self::assertEquals([
                 new Breadcrumb('debug', 'default', $categoryFUA, '## Beginning of auth logging.',[],0),
                 new Breadcrumb('debug', 'default', $categoryFUA, 'Login type: {type}',['type' => 'FE'],0),
@@ -58,6 +59,7 @@ class InitialTest extends TestCase
                 new Breadcrumb('debug', 'default', $categoryFUA, 'No user session found',[],0),
                 new Breadcrumb('debug', 'default', $categoryFUA, 'No usergroups found',[],0),
                 new Breadcrumb('debug', 'default', $categoryFUA, 'Valid frontend usergroups: {groups}',['groups' => '0,-1'],0),
+                new Breadcrumb('warning', 'default', $categoryPEH, 'Oops, an error occurred! Request: {requestId}',['exception' => [], 'code' => '', 'requestId' => []],0),
             ], $event->getBreadCrumbsWithoutTimestamp(), 'Expected FrontendUserAuthentication breadcrumbs in the event');
         }
     }

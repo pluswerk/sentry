@@ -5,7 +5,8 @@ declare(strict_types=1);
 namespace Pluswerk\Sentry\Service;
 
 use InvalidArgumentException;
-use Pluswerk\Sentry\Transport\MockTransportFactory;
+use Pluswerk\Sentry\Integration\ExtSentryIntegration;
+use Pluswerk\Sentry\Tests\Helper\MockTransportFactory;
 use Pluswerk\Sentry\Transport\QueueTransportFactory;
 use Sentry\ClientBuilder;
 use Sentry\ClientInterface;
@@ -18,8 +19,6 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Core\Environment;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-
-use function dd;
 use function getenv;
 use function Sentry\captureException;
 use function Sentry\configureScope;
@@ -31,8 +30,27 @@ class Sentry implements SingletonInterface
         protected ScopeConfig $scopeConfig,
         protected ConfigService $config,
     ) {
-        dd();
-        $this->setup();
+//        $this->setup();
+    }
+
+    public function staticSetup()
+    {
+//        $config = GeneralUtility::makeInstance(
+//            ConfigService::class,
+//            GeneralUtility::makeInstance(ExtensionConfiguration::class),
+//        );
+
+        \Sentry\init([
+//            'environment' => preg_replace('#[\/\s]#', '', (string)Environment::getContext()),
+            'dsn' => 'https://sentry.example.com/123456', // $config->getDsn(),
+//            'attach_stacktrace' => true,
+//            'error_types' => $config->getErrorsToReport(),
+//            'prefixes' => [Environment::getProjectPath()],
+//            'release' => $config->isWithGitReleases() ? shell_exec('git rev-parse HEAD') : null,
+            'integrations' => [
+                new ExtSentryIntegration(),
+            ]
+        ]);
     }
 
     public function isDisabled(): bool
@@ -60,7 +78,8 @@ class Sentry implements SingletonInterface
 
         $builder = ClientBuilder::create(array_filter($options));
         if ($this->config->isQueueEnabled()) {
-            $builder->setTransportFactory(new QueueTransportFactory());
+            $transport = (new QueueTransportFactory())->create($builder->getOptions());
+            $builder->setTransport($transport);
         }
 
         $this->addMockIfNeeded($builder);
@@ -121,6 +140,7 @@ class Sentry implements SingletonInterface
         if (!$mockSeed) {
             return;
         }
-        $builder->setTransportFactory(new MockTransportFactory($mockSeed));
+        $transport = (new MockTransportFactory($mockSeed))->register($builder->getOptions());
+        $builder->setTransport($transport);
     }
 }

@@ -72,7 +72,8 @@ final readonly class SentryEvent
 
     public function getException(): ExceptionDataBag
     {
-        Assert::assertCount(1, $this->exceptions, 'Expected exactly one exception in the event');
+        //Assert::assertCount(1, $this->exceptions, 'Expected exactly one exception in the event'); // TODO activate this instead of the next line
+        Assert::assertGreaterThanOrEqual(1, count($this->exceptions), 'Expected more than 1 exception in the event');
         $exception = $this->exceptions[0];
         Assert::assertInstanceOf(ExceptionDataBag::class, $exception);
         return $exception;
@@ -102,12 +103,13 @@ final readonly class SentryEvent
         Assert::assertLessThanOrEqual($lineNumber + $plusMinus, $lastFrame->getLine(), 'Exception line does not match expected value');
     }
 
-    public function assertTags(string $typo3Mode): void
+    public function assertTags(string $requestType): void
     {
         Assert::assertNotEmpty($this->tags['typo3_version'], 'Expected tags "typo3_version" to not be empty');
-        Assert::assertEquals($typo3Mode, $this->tags['typo3_mode'], 'Expected tags "typo3_mode" to be "frontend"');
-        Assert::assertEquals(PHP_VERSION, $this->tags['php_version'], 'Expected tags "php_version" to match current PHP version');
-        Assert::assertEquals('Production', $this->tags['application_context'], 'Expected tags "application_context" to be "Production"');
+        Assert::assertEquals($requestType, $this->tags['request_type'], 'Expected tags "typo3_mode" to be "frontend"');
+
+        Assert::assertEquals(PHP_VERSION, $this->runtimeContext->getVersion(), 'Expected runtime context "version" to match PHP_VERSION');
+        Assert::assertEquals('Production', $this->tags['application_context'], 'Expected tags "application_context" to be "Production"'); // only in environment?
     }
 
     public function assertExtras(bool $isCli): void

@@ -14,22 +14,26 @@ use TYPO3\CMS\Core\Log\Writer\AbstractWriter;
 use TYPO3\CMS\Core\Log\Writer\WriterInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use function sprintf;
 
 class BreadcrumbLogger extends AbstractWriter implements SingletonInterface
 {
     public function writeLog(LogRecord $record): WriterInterface
     {
-        $hub = Sentry::getInstance()->getHub();
-        if (!$hub instanceof HubInterface) {
-            return $this;
-        }
-
         if (!ExtensionManagementUtility::isLoaded('sentry')) {
             return $this;
         }
 
-        //send breadcrumb to sentry
-        $hub->addBreadcrumb(
+        $hub = Sentry::getInstance()->getHub(); // TODO remove this if we always call \Sentry\init();
+        if (!$hub instanceof HubInterface) {
+            return $this;
+        }
+
+        if ($record->getComponent() === 'TYPO3.CMS.Frontend.ContentObject.Exception.ProductionExceptionHandler') {
+            return $this;
+        }
+
+        \Sentry\addBreadcrumb(
             new Breadcrumb(
                 match ($record->getLevel()) {
                     LogLevel::EMERGENCY => Breadcrumb::LEVEL_FATAL,

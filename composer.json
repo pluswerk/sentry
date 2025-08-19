@@ -15,7 +15,7 @@
     "composer-runtime-api": "^2",
     "http-interop/http-factory-guzzle": "^1.2.0",
     "psr/log": "*",
-    "sentry/sentry": "^3.22.1",
+    "sentry/sentry": "^4",
     "typo3/cms-core": "^11.5 || ^12.4 || ^13.4",
     "typo3/cms-frontend": "^11.5 || ^12.4 || ^13.4"
   },

@@ -12,7 +12,7 @@ use Sentry\Transport\TransportFactoryInterface;
 use Sentry\Transport\TransportInterface;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
-class QueueTransportFactory implements TransportFactoryInterface
+class QueueTransportFactory
 {
     public function create(Options $options): TransportInterface
     {

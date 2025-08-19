@@ -16,6 +16,7 @@ use Sentry\Options;
 use Sentry\Response;
 use Sentry\ResponseStatus;
 use Sentry\Serializer\PayloadSerializerInterface;
+use Sentry\Transport\Result;
 use Sentry\Transport\TransportInterface;
 
 class QueueTransport implements TransportInterface
@@ -24,7 +25,7 @@ class QueueTransport implements TransportInterface
     {
     }
 
-    public function send(Event $event): PromiseInterface
+    public function send(Event $event): Result
     {
         $dsn = $this->options->getDsn();
 
@@ -46,7 +47,7 @@ class QueueTransport implements TransportInterface
         return new FulfilledPromise($sendResponse);
     }
 
-    public function close(?int $timeout = null): PromiseInterface
+    public function close(?int $timeout = null): Result
     {
         return new FulfilledPromise(true);
     }

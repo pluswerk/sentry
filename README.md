@@ -62,11 +62,12 @@ You can write this in your additional.php if you want all warnings from the TYPO
 ## TODOS:
 
 - [ ] Automated tests + run-test-server
-- [ ] Update to newest sentry SDK version
+- [ ] Update to the newest sentry SDK version
 - [ ] only catch exceptions once
 
+
 Idea:
-- use `\Sentry\init()` as early as possbile (HTTP and CLI) And use it always, not only if we handle a LogEntry or Exception.
+- use `\Sentry\init()` as early as possible (HTTP and CLI) And use it always, not only if we handle a LogEntry or Exception.
 - after that you should be able to use `\Sentry\captureException()` and `\Sentry\captureMessage()` in your code. Without the Singleton.
 - Check if the normal error handler of TYPO3 still works.
 - Maybe we do not need to overwrite the TYPO3 ErrorHandlers at all? if we run `\Sentry\init()` at the correct time.

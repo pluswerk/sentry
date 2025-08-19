@@ -21,8 +21,7 @@ class SentryLogger extends AbstractWriter implements SingletonInterface
 {
     public function writeLog(LogRecord $record): WriterInterface
     {
-        $client = Sentry::getInstance()->getClient();
-        if (!$client instanceof ClientInterface) {
+        if (!ExtensionManagementUtility::isLoaded('sentry')) {
             return $this;
         }
 
@@ -30,7 +29,8 @@ class SentryLogger extends AbstractWriter implements SingletonInterface
             return $this;
         }
 
-        if (!ExtensionManagementUtility::isLoaded('sentry')) {
+        $client = Sentry::getInstance()->getClient();
+        if (!$client instanceof ClientInterface) {
             return $this;
         }
 
